@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Κρατήσεις Τιμολογίων — Στρατιωτικές Δαπάνες</title>
+<meta name="description" content="Υπολογισμός κρατήσεων σε τιμολόγια δαπανών Ελληνικού Στρατού — ΦΕ, Ε.Α.ΔΗ.ΣΥ., στρατιωτικές κρατήσεις.">
+<meta name="theme-color" content="#1F2123">
+<!-- iOS / Add to Home Screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Κρατήσεις">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIs6az4HOsc+Ezq7Pg861zrnPgiDOpM65zrzOv867zr/Os86vz4nOvSDigJQgzqPPhM+BzrHPhM65z4nPhM65zrrOrc+CIM6UzrHPgM6szr3Otc+CIiwgInNob3J0X25hbWUiOiAizprPgc6xz4TOrs+DzrXOuc+CIiwgImxhbmciOiAiZWwiLCAic3RhcnRfdXJsIjogIi4vIiwgInNjb3BlIjogIi4vIiwgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsICJvcmllbnRhdGlvbiI6ICJhbnkiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjRjVGNUY0IiwgInRoZW1lX2NvbG9yIjogIiMxRjIxMjMiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCclM0UlM0NyZWN0IHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgcng9JzE0JyBmaWxsPSclMjMxRjIxMjMnLyUzRSUzQ3RleHQgeD0nMzInIHk9JzQyJyBmb250LWZhbWlseT0nR2VvcmdpYSxzZXJpZicgZm9udC1zaXplPSczMCcgZmlsbD0nJTIzRjZGNUYwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyUzRSUyNSUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsICJzaXplcyI6ICJhbnkiLCAidHlwZSI6ICJpbWFnZS9zdmcreG1sIn1dfQ==">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F2123'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23F6F5F0' text-anchor='middle'%3E%25%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%231F2123'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23F6F5F0' text-anchor='middle'%3E%25%3C/text%3E%3C/svg%3E">
+<style>
+/* ============ ΒΑΣΗ ============ */
+* { margin:0; padding:0; -webkit-box-sizing:border-box; box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background:#F5F5F4;
+  color:#1B1C1E;
+  font-size:16px;
+  line-height:1.45;
+  min-height:100vh;
+  padding-bottom:40px;
+}
+.mono {
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============ ΚΕΦΑΛΙΔΑ ============ */
+header.app {
+  background:#1F2123;
+  color:#F5F5F4;
+  padding:18px 20px 16px;
+  padding-top:calc(18px + constant(safe-area-inset-top));
+  padding-top:calc(18px + env(safe-area-inset-top));
+}
+header.app .eyebrow {
+  font-size:11px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:#9CA3AF;
+  margin-bottom:4px;
+}
+header.app h1 {
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:0.01em;
+}
+
+/* ============ ΔΙΑΤΑΞΗ ============ */
+.wrap {
+  max-width:980px;
+  margin:0 auto;
+  padding:20px 14px 0;
+}
+.cols { display:block; }
+@media (min-width: 860px) {
+  .cols { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-align-items:flex-start; align-items:flex-start; }
+  .col-form { -webkit-flex:1 1 auto; flex:1 1 auto; margin-right:22px; }
+  .col-receipt { width:400px; -webkit-flex:0 0 400px; flex:0 0 400px; position:-webkit-sticky; position:sticky; top:16px; }
+}
+
+/* ============ ΚΑΡΤΕΣ / ΦΟΡΜΑ ============ */
+.card {
+  background:#FFFFFF;
+  border:1px solid #E0E0DC;
+  border-radius:10px;
+  padding:18px 16px;
+  margin-bottom:16px;
+}
+.card h2 {
+  font-size:12px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:#6E7075;
+  font-weight:700;
+  margin-bottom:14px;
+}
+.field { margin-bottom:16px; }
+.field:last-child { margin-bottom:2px; }
+label.lbl {
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+.hint { font-size:12.5px; color:#6E7075; margin-top:5px; }
+.hint.alert { color:#9A6700; }
+
+input.amount {
+  width:100%;
+  font-size:26px;
+  font-weight:600;
+  padding:10px 12px;
+  border:1.5px solid #C9C9C4;
+  border-radius:8px;
+  background:#FCFCFB;
+  color:#1B1C1E;
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+input.amount:focus, input.pct:focus, .seg label:focus-within { outline:3px solid #8A909A; outline-offset:1px; }
+input:focus { outline:3px solid #8A909A; outline-offset:1px; }
+select.sel {
+  width:100%;
+  padding:11px 12px;
+  font-size:15px;
+  font-weight:600;
+  border:1.5px solid #C9C9C4;
+  border-radius:8px;
+  background:#FCFCFB;
+  color:#1B1C1E;
+  font-family:inherit;
+}
+select.sel:focus { outline:3px solid #8A909A; outline-offset:1px; }
+
+/* Segmented (ΦΠΑ, είδος δαπάνης) */
+.seg {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  border:1.5px solid #C9C9C4;
+  border-radius:8px;
+  overflow:hidden;
+  background:#FCFCFB;
+}
+.seg input { position:absolute; opacity:0; width:1px; height:1px; }
+.seg label {
+  -webkit-flex:1 1 0; flex:1 1 0;
+  text-align:center;
+  padding:10px 4px;
+  font-size:15px;
+  font-weight:600;
+  color:#5B5D4E;
+  cursor:pointer;
+  border-right:1px solid #E0E0DC;
+  -webkit-user-select:none; user-select:none;
+}
+.seg label:last-child { border-right:none; }
+.seg input:checked + label {
+  background:#1F2123;
+  color:#F5F5F4;
+}
+.seg input:focus + label { outline:3px solid #8A909A; outline-offset:-3px; }
+
+/* Διακόπτες */
+.togglerow {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-align-items:center; align-items:center;
+  -webkit-justify-content:space-between; justify-content:space-between;
+  padding:6px 0;
+}
+.togglerow .txt { padding-right:12px; }
+.togglerow .txt b { display:block; font-size:15px; }
+.togglerow .txt small { display:block; font-size:12.5px; color:#6E7075; margin-top:1px; }
+.switch { position:relative; display:inline-block; width:52px; height:30px; -webkit-flex:0 0 52px; flex:0 0 52px; }
+.switch input { position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; z-index:2; }
+.switch .track {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background:#C9C9C4;
+  border-radius:30px;
+  -webkit-transition:background .15s; transition:background .15s;
+}
+.switch .track:before {
+  content:"";
+  position:absolute; top:3px; left:3px;
+  width:24px; height:24px;
+  background:#FFFFFF;
+  border-radius:50%;
+  -webkit-transition:left .15s; transition:left .15s;
+  -webkit-box-shadow:0 1px 2px rgba(0,0,0,.25); box-shadow:0 1px 2px rgba(0,0,0,.25);
+}
+.switch input:checked ~ .track { background:#1F2123; }
+.switch input:checked ~ .track:before { left:25px; }
+.switch input:focus ~ .track { outline:3px solid #8A909A; outline-offset:2px; }
+@media (prefers-reduced-motion: reduce) {
+  .switch .track, .switch .track:before { -webkit-transition:none; transition:none; }
+}
+
+/* Ποσοστά στρατιωτικών κρατήσεων */
+#milcfg, #spcfg { display:none; margin-top:10px; padding:12px; background:#F0F0EE; border-radius:8px; }
+#milcfg.open, #spcfg.open { display:block; }
+#milcfg .row, #spcfg .row {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-align-items:center; align-items:center;
+  -webkit-justify-content:space-between; justify-content:space-between;
+  margin-bottom:8px;
+}
+#milcfg .row:last-child, #spcfg .row:last-child { margin-bottom:0; }
+#milcfg .row span, #spcfg .row span { font-size:13.5px; padding-right:10px; }
+input.pct {
+  width:88px;
+  padding:7px 8px;
+  font-size:15px;
+  text-align:right;
+  border:1.5px solid #C9C9C4;
+  border-radius:7px;
+  background:#FFFFFF;
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+#vat-other-wrap { display:none; margin-top:8px; }
+#vat-other-wrap.open { display:block; }
+.linkbtn {
+  background:none; border:none; color:#1F2123;
+  font-size:13px; font-weight:600; text-decoration:underline;
+  cursor:pointer; padding:4px 0; margin-top:6px;
+  font-family:inherit;
+}
+
+/* ============ ΑΠΟΔΕΙΞΗ ============ */
+.receipt {
+  background:#FFFFFF;
+  border:1px solid #E0E0DC;
+  border-radius:10px;
+  padding:0 0 18px;
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.receipt .inner { padding:18px 18px 0; }
+.receipt h2 {
+  font-size:12px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  text-align:center;
+  color:#1F2123;
+  font-weight:700;
+  margin-bottom:2px;
+}
+.receipt .sub {
+  text-align:center;
+  font-size:11.5px;
+  color:#6E7075;
+  letter-spacing:0.06em;
+  margin-bottom:12px;
+}
+.rrow {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-justify-content:space-between; justify-content:space-between;
+  -webkit-align-items:baseline; align-items:baseline;
+  padding:5px 0;
+  font-size:14.5px;
+}
+.rrow .k { color:#333538; padding-right:10px; }
+.rrow .k small { color:#6E7075; font-size:12px; }
+.rrow .v { white-space:nowrap; font-size:15px; }
+.rrow.sub2 { padding-left:14px; font-size:13.5px; }
+.rrow.sub2 .k { color:#6E7075; }
+.rrow.head {
+  font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase;
+  color:#6E7075; font-weight:700; margin-top:10px;
+  border-bottom:1px solid #E8E8E4; padding-bottom:3px;
+}
+.rrow.head .v { font-size:11.5px; }
+.rrow.total {
+  border-top:1px solid #E0E0DC;
+  margin-top:6px; padding-top:9px;
+  font-weight:700;
+}
+.rrow.zero .v, .rrow.zero .k { color:#A5A6A3; }
+.rrow.payable {
+  border-top:2px solid #1F2123;
+  margin-top:10px;
+  padding-top:12px;
+  font-weight:700;
+}
+.rrow.payable .k { font-size:15px; color:#1B1C1E; }
+.rrow.payable .v { font-size:23px; letter-spacing:-0.01em; }
+.pctnote { text-align:center; font-size:12px; color:#6E7075; margin-top:10px; }
+
+/* Κουμπιά ενεργειών */
+.actions { display:-webkit-box; display:-webkit-flex; display:flex; }
+.actions button {
+  -webkit-flex:1 1 0; flex:1 1 0;
+  font-family:inherit;
+  font-size:15px; font-weight:600;
+  padding:12px 8px;
+  border-radius:8px;
+  border:1.5px solid #1F2123;
+  cursor:pointer;
+}
+.actions button.primary { background:#1F2123; color:#F5F5F4; margin-right:10px; }
+.actions button.ghost { background:transparent; color:#1F2123; }
+.actions button:focus { outline:3px solid #8A909A; outline-offset:2px; }
+#copied { text-align:center; font-size:13px; color:#1F2123; margin-top:8px; min-height:18px; }
+
+footer.note {
+  max-width:980px; margin:6px auto 0; padding:0 16px;
+  font-size:12px; color:#8B8C89;
+}
+.mobile-help {
+  max-width:980px; margin:16px auto 0; padding:0 16px;
+}
+.mobile-help > summary {
+  cursor:pointer; font-size:14px; font-weight:600; color:#1F2123;
+  padding:12px 14px; background:#FFFFFF; border:1px solid #E0E0DC;
+  border-radius:10px; list-style:none;
+}
+.mobile-help > summary::-webkit-details-marker { display:none; }
+.mobile-help > summary::before { content:"\25B8  "; color:#6E7075; }
+.mobile-help[open] > summary::before { content:"\25BE  "; }
+.mobile-help .mh-body {
+  background:#FFFFFF; border:1px solid #E0E0DC; border-top:none;
+  border-radius:0 0 10px 10px; padding:4px 16px 14px;
+}
+.mobile-help .mh-body p { font-size:13.5px; color:#3B3E32; margin-top:10px; }
+
+/* ============ ΚΑΤΑΣΤΑΣΗ ΠΛΗΡΩΜΗΣ & ΔΙΚΑΙΟΛΟΓΗΤΙΚΑ ============ */
+#ks-body { display:none; margin-top:8px; }
+#ks-body.open { display:block; }
+.kfield { margin-bottom:10px; }
+label.klbl { display:block; font-size:12.5px; font-weight:600; color:#6E7075; margin-bottom:3px; }
+.txtin { width:100%; padding:9px 10px; font-size:14.5px; border:1.5px solid #C9C9C4; border-radius:7px; background:#FCFCFB; color:#1B1C1E; font-family:inherit; }
+textarea.txtin { resize:vertical; }
+.txtin:focus { outline:3px solid #8A909A; outline-offset:1px; }
+.ks-row { display:-webkit-box; display:-webkit-flex; display:flex; margin-bottom:8px; }
+.ks-row .ks-num { -webkit-flex:1.3 1 0; flex:1.3 1 0; margin-right:8px; }
+.ks-row .ks-val { -webkit-flex:1 1 0; flex:1 1 0; }
+.ks-row .rm { border:none; background:none; color:#6E7075; font-size:20px; line-height:1; cursor:pointer; padding:0 6px; }
+.docs { list-style:none; margin:4px 0 0; }
+.docs li { position:relative; padding:7px 0 7px 22px; font-size:14px; border-bottom:1px solid #EFEFEC; }
+.docs li:last-child { border-bottom:none; }
+.docs li:before { content:"\2713"; position:absolute; left:2px; top:7px; font-weight:700; color:#1F2123; }
+.docs li.no { color:#A5A6A3; }
+.docs li.no:before { content:"\2014"; color:#A5A6A3; }
+.docs li small { color:#6E7075; }
+
+/* Εκτυπώσιμη Κατάσταση Πληρωμής */
+#ks-print { display:none; color:#000; font-size:12.5px; }
+#ks-print .ks-head { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-justify-content:space-between; justify-content:space-between; }
+#ks-print .ks-unit { text-align:left; font-weight:600; }
+#ks-print .ks-title { text-align:center; font-weight:700; font-size:15px; text-decoration:underline; margin:6px 0 10px; }
+#ks-print .ks-meta { margin-bottom:6px; line-height:1.5; }
+#ks-print table { width:100%; border-collapse:collapse; font-size:10.5px; margin-top:6px; }
+#ks-print th, #ks-print td { border:1px solid #555; padding:3px 4px; vertical-align:top; }
+#ks-print th { font-size:9.5px; text-align:center; background:#F2F2F0; }
+#ks-print td.num { text-align:right; white-space:nowrap; }
+#ks-print td.ben { font-size:10px; }
+#ks-print .ks-sign { margin-top:26px; text-align:right; padding-right:40px; font-weight:600; }
+
+/* ============ ΕΚΤΥΠΩΣΗ ============ */
+@media print {
+  body { background:#fff; padding:0; }
+  header.app, .col-form, .actions, footer.note, #copied, .mobile-help { display:none !important; }
+  .wrap { padding:0; max-width:none; }
+  .col-receipt { width:auto; }
+  .receipt { border:1px solid #999; border-radius:0; }
+}
+@media print {
+  body.print-ks header.app, body.print-ks .wrap, body.print-ks footer.note { display:none !important; }
+  body.print-ks #ks-print { display:block !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="eyebrow">Ελληνικός Στρατός &middot; Δαπάνες</div>
+  <h1>Υπολογισμός Κρατήσεων Τιμολογίου</h1>
+</header>
+
+<div class="wrap">
+  <div class="cols">
+
+    <!-- ================= ΦΟΡΜΑ ================= -->
+    <div class="col-form">
+
+      <div class="card">
+        <h2>Στοιχεία τιμολογίου</h2>
+
+        <div class="field">
+          <label class="lbl" for="scenario">Σενάριο δαπάνης</label>
+          <select id="scenario" class="sel">
+            <option value="none" selected>&mdash; Χειροκίνητες ρυθμίσεις &mdash;</option>
+            <option value="std_c">Προμήθεια/υπηρεσία με σύμβαση (ΥΠΕΘΑ)</option>
+            <option value="std_nc">Μικροδαπάνη χωρίς σύμβαση</option>
+            <option value="deko">Λογαριασμοί ΔΕΚΟ (ρεύμα/νερό/τηλ./εισιτήρια)</option>
+            <option value="defense">Πολεμικές βιομηχανίες (ΕΑΒ/ΕΒΟ/ΠΥΡΚΑΛ/ΕΛΒΟ)</option>
+            <option value="pharma">Φάρμακα / είδη ασφαλισμένων</option>
+            <option value="pde">Π/Υ Δημοσίων Επενδύσεων (εκτός e-ΠΔΕ)</option>
+            <option value="sp">Ιδίων πόρων &mdash; μέσω Στρατιωτικού Πρατηρίου (ΣΠ)</option>
+            <option value="eep_resale">Κεφάλαια ΕΕΠ &mdash; μεταπώληση/επ' ωφελεία</option>
+            <option value="eep_other">Κεφάλαια ΕΕΠ &mdash; λοιπές δαπάνες</option>
+          </select>
+          <p class="hint" id="scenario-note"></p>
+        </div>
+
+        <div class="field">
+          <label class="lbl">Γνωστό ποσό</label>
+          <div class="seg">
+            <input type="radio" name="amode" id="am-net" value="net" checked><label for="am-net">Καθαρή</label>
+            <input type="radio" name="amode" id="am-gross" value="gross"><label for="am-gross">Μικτή</label>
+            <input type="radio" name="amode" id="am-pay" value="pay"><label for="am-pay" id="am-pay-label">Πληρωτέο</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="lbl" id="amount-label" for="net">Καθαρή αξία (&euro;)</label>
+          <input class="amount" type="text" id="net" inputmode="decimal" autocomplete="off" placeholder="0,00">
+          <p class="hint" id="solve-note"></p>
+        </div>
+
+        <div class="field">
+          <label class="lbl">ΦΠΑ</label>
+          <div class="seg" id="vatseg">
+            <input type="radio" name="vat" id="vat24" value="24" checked><label for="vat24">24%</label>
+            <input type="radio" name="vat" id="vat13" value="13"><label for="vat13">13%</label>
+            <input type="radio" name="vat" id="vat6" value="6"><label for="vat6">6%</label>
+            <input type="radio" name="vat" id="vat0" value="0"><label for="vat0">0%</label>
+            <input type="radio" name="vat" id="vatx" value="x"><label for="vatx">Άλλο</label>
+          </div>
+          <div id="vat-other-wrap">
+            <input class="pct" type="number" id="vat-other" min="0" max="100" step="0.1" value="17"> <span class="hint" style="display:inline">% ΦΠΑ (π.χ. μειωμένοι συντελεστές νησιών)</span>
+          </div>
+        </div>
+
+        <div class="field" id="kind-field">
+          <label class="lbl" for="kind">Είδος δαπάνης (συντελεστής ΦΕ — Παράρτημα «Η» ΤΕ 61-4)</label>
+          <select id="kind" class="sel">
+            <option value="goods" selected>Προμήθεια αγαθών / υλικών — ΦΕ 4%</option>
+            <option value="fuel">Υγρά καύσιμα &amp; προϊόντα καπνοβιομηχανίας — ΦΕ 1%</option>
+            <option value="services">Παροχή υπηρεσιών — ΦΕ 8%</option>
+            <option value="consulting">Συμβουλευτικές / αμοιβές διοίκησης — ΦΕ 20%</option>
+            <option value="works">Τεχνικά έργα (εργολήπτες) — ΦΕ 3%</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Κρατήσεις</h2>
+
+        <div id="std-controls">
+        <div class="togglerow">
+          <div class="txt">
+            <b>Υπάρχει σύμβαση</b>
+            <small>Χωρίς σύμβαση και με καθαρή αξία έως 150&euro;, δεν παρακρατείται ΦΕ.</small>
+          </div>
+          <span class="switch">
+            <input type="checkbox" id="contract">
+            <span class="track"></span>
+          </span>
+        </div>
+
+        <div class="togglerow">
+          <div class="txt">
+            <b>Κράτηση ν.5223/25 (άρθ.37)</b>
+            <small>Επί συμβάσεων ΥΠΕΘΑ (πρώην ΜΤΣ/ΕΚΟΕΜΣ κ.λπ.). Ισχύον ποσοστό: <span id="miltotal">6</span>%.</small>
+          </div>
+          <span class="switch">
+            <input type="checkbox" id="mil">
+            <span class="track"></span>
+          </span>
+        </div>
+        <button type="button" class="linkbtn" id="milcfg-btn">Ρύθμιση ποσοστών κράτησης</button>
+        <div id="milcfg">
+          <div class="row"><span>Βασικό ποσοστό — % επί καθαρής αξίας</span><input class="pct" type="number" id="mil-base" min="0" step="0.001" value="6"></div>
+          <div class="row"><span>Χαρτόσημο — % επί της κράτησης</span><input class="pct" type="number" id="mil-stamp" min="0" step="0.001" value="0"></div>
+          <div class="row"><span>ΟΓΑ χαρτοσήμου — % επί του χαρτοσήμου</span><input class="pct" type="number" id="mil-oga" min="0" step="0.001" value="20"></div>
+          <p class="hint" style="margin-top:8px">Το ΤΕ 61-4 (Τ1) εφαρμόζει ενιαία 6%. Για το παλαιό καθεστώς ΜΤΣ 4,096%: βάση 4, χαρτόσημο 2, ΟΓΑ 20.</p>
+        </div>
+
+        <div class="togglerow" style="margin-top:6px">
+          <div class="txt">
+            <b>Χαρτόσημο 3% + ΟΓΑ 20% επί Ε.Α.ΔΗ.ΣΥ.</b>
+            <small>Το Υπόδειγμα «3» του ΤΕ 61-4 (Τ1) εφαρμόζει μόνο 0,1% χωρίς χαρτόσημο.</small>
+          </div>
+          <span class="switch">
+            <input type="checkbox" id="eadisy-stamp">
+            <span class="track"></span>
+          </span>
+        </div>
+
+        <p class="hint" id="eadisy-note" style="margin-top:10px">Η κράτηση Ε.Α.ΔΗ.ΣΥ. 0,1% εφαρμόζεται αυτόματα όταν η καθαρή αξία υπερβαίνει τα 1.000&euro;.</p>
+        <p class="hint alert" id="mil-hint" style="display:none">Καθαρή αξία άνω των 2.500&euro; με σύμβαση — έλεγξε αν εφαρμόζεται η κράτηση ν.5223/25 (άρθ.37).</p>
+        </div>
+
+        <div id="spcfg">
+          <div class="row"><span>Κρατήσεις δαπάνης — % επί πληρωτέου διατακτικής</span><input class="pct" type="number" id="sp-krat" min="0" step="0.01" value="16"></div>
+          <div class="row"><span>Υπέρ ΣΠ — % επί καθαρής αξίας τιμολογίου</span><input class="pct" type="number" id="sp-yp" min="0" step="0.01" value="10"></div>
+          <p class="hint" style="margin-top:8px">Με ΦΠΑ 24% αντιστοιχεί στους συντελεστές &divide;1,16 και &divide;1,34 του φύλλου του ΣΠ (1,34 = 1 + ΦΠΑ + 10%).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Κατάσταση Πληρωμής (Υπόδειγμα «3»)</h2>
+        <p class="hint">Πολλά τιμολόγια ίδιου δικαιούχου — οι κρατήσεις, ο ΦΕ και ο ΦΠΑ εφαρμόζονται σε κάθε τιμολόγιο από τις τρέχουσες ρυθμίσεις.</p>
+        <button type="button" class="linkbtn" id="ks-toggle">Συμπλήρωση στοιχείων &amp; τιμολογίων</button>
+        <div id="ks-body">
+          <div class="kfield"><label class="klbl" for="ks-unit">Σχηματισμός / Μονάδα / Διεύθυνση (μία γραμμή ανά σειρά)</label><textarea class="txtin" id="ks-unit" rows="3"></textarea></div>
+          <div class="kfield"><label class="klbl" for="ks-tel">Τηλέφωνο</label><input class="txtin" type="text" id="ks-tel"></div>
+          <div class="kfield"><label class="klbl" for="ks-topos">Τόπος</label><input class="txtin" type="text" id="ks-topos"></div>
+          <div class="kfield"><label class="klbl" for="ks-ef">Ειδικός Φορέας</label><input class="txtin" type="text" id="ks-ef" placeholder="π.χ. 1011-202-0000000 (ΓΕΣ)"></div>
+          <div class="kfield"><label class="klbl" for="ks-ale">ΑΛΕ</label><input class="txtin" type="text" id="ks-ale"></div>
+          <div class="kfield"><label class="klbl" for="ks-ben">Δικαιούχος (επωνυμία)</label><input class="txtin" type="text" id="ks-ben"></div>
+          <div class="kfield"><label class="klbl" for="ks-ben-addr">Διεύθυνση δικαιούχου</label><input class="txtin" type="text" id="ks-ben-addr"></div>
+          <div class="kfield"><label class="klbl" for="ks-afm">ΑΦΜ</label><input class="txtin" type="text" id="ks-afm" inputmode="numeric"></div>
+          <div class="kfield"><label class="klbl" for="ks-iban">IBAN</label><input class="txtin" type="text" id="ks-iban"></div>
+          <div class="kfield"><label class="klbl" for="ks-logo">Αιτιολογία δαπάνης (ΛΟΓΩ)</label><input class="txtin" type="text" id="ks-logo"></div>
+          <div class="kfield"><label class="klbl">Τιμολόγια (αριθμός παραστατικού &amp; καθαρή αξία)</label>
+            <div id="ks-invs"></div>
+            <button type="button" class="linkbtn" id="ks-add">+ Προσθήκη τιμολογίου</button>
+          </div>
+          <p class="hint" id="ks-prev"></p>
+          <div class="actions" style="margin-top:6px">
+            <button type="button" class="primary" id="btn-ks-print">Εκτύπωση Κατάστασης</button>
+          </div>
+          <p class="hint">Στο παράθυρο εκτύπωσης επίλεξε οριζόντιο προσανατολισμό (ρυθμίζεται και αυτόματα όπου υποστηρίζεται).</p>
+          <p class="hint alert" id="ks-warn"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Δικαιολογητικά</h2>
+        <div class="field">
+          <label class="lbl" for="doc-proc">Διαδικασία ανάθεσης</label>
+          <select id="doc-proc" class="sel">
+            <option value="none" selected>&mdash; Επίλεξε διαδικασία &mdash;</option>
+            <option value="minor">Σύμβαση ήσσονος αξίας (έως 2.500&euro;)</option>
+            <option value="direct">Απευθείας ανάθεση (έως 30.000&euro;)</option>
+            <option value="tender">Διαγωνιστική διαδικασία (άνω των 30.000&euro;)</option>
+          </select>
+        </div>
+        <div id="doc-list"></div>
+      </div>
+
+    </div>
+
+    <!-- ================= ΑΠΟΔΕΙΞΗ ================= -->
+    <div class="col-receipt">
+      <div class="receipt" id="receipt">
+        <div class="inner">
+          <h2>Εκκαθαριση Δαπανης</h2>
+          <div class="sub" id="rdate"></div>
+
+          <div class="rrow" id="row-sp-kat" style="display:none"><span class="k">Καταλογιστέο (ιδίων πόρων)</span><span class="v mono" id="r-sp-kat">0,00 &euro;</span></div>
+          <div class="rrow sub2" id="row-sp-krat" style="display:none"><span class="k">Κρατήσεις δαπάνης <span id="r-sp-kratpct">16</span>%</span><span class="v mono" id="r-sp-krat">0,00 &euro;</span></div>
+          <div class="rrow" id="row-sp-plid" style="display:none"><span class="k">Πληρωτέο διατακτικής</span><span class="v mono" id="r-sp-plid">0,00 &euro;</span></div>
+          <div class="rrow sub2" id="row-sp-yp" style="display:none"><span class="k">Υπέρ ΣΠ <span id="r-sp-yppct">10</span>% επί καθαρής</span><span class="v mono" id="r-sp-yp">0,00 &euro;</span></div>
+
+          <div class="rrow"><span class="k">Καθαρή αξία</span><span class="v mono" id="r-net">0,00 &euro;</span></div>
+          <div class="rrow"><span class="k">ΦΠΑ <small id="r-vatpct">24%</small></span><span class="v mono" id="r-vat">0,00 &euro;</span></div>
+          <div class="rrow total" id="row-gross"><span class="k">Μικτή αξία</span><span class="v mono" id="r-gross">0,00 &euro;</span></div>
+
+          <div class="rrow head" id="row-dhead"><span class="k">Κρατήσεις</span><span class="v">&nbsp;</span></div>
+          <div class="rrow" id="row-m1"><span class="k">Κράτηση ν.5223/25 <small id="r-m1pct">6%</small></span><span class="v mono" id="r-m1">0,00 &euro;</span></div>
+          <div class="rrow sub2" id="row-m2"><span class="k">Χαρτόσημο <span id="r-m2pct">0</span>%</span><span class="v mono" id="r-m2">0,00 &euro;</span></div>
+          <div class="rrow sub2" id="row-m3"><span class="k">ΟΓΑ χαρτοσήμου <span id="r-m3pct">20</span>%</span><span class="v mono" id="r-m3">0,00 &euro;</span></div>
+          <div class="rrow" id="row-e1"><span class="k">Ε.Α.ΔΗ.ΣΥ. <small>0,1%</small></span><span class="v mono" id="r-e1">0,00 &euro;</span></div>
+          <div class="rrow sub2" id="row-e2"><span class="k">Χαρτόσημο 3%</span><span class="v mono" id="r-e2">0,00 &euro;</span></div>
+          <div class="rrow sub2" id="row-e3"><span class="k">ΟΓΑ χαρτοσήμου 20%</span><span class="v mono" id="r-e3">0,00 &euro;</span></div>
+          <div class="rrow" id="row-fe"><span class="k">Φόρος εισοδήματος <small id="r-fepct">4%</small></span><span class="v mono" id="r-fe">0,00 &euro;</span></div>
+          <div class="rrow total" id="row-ded"><span class="k" id="r-ded-label">Σύνολο κρατήσεων</span><span class="v mono" id="r-ded">0,00 &euro;</span></div>
+
+          <div class="rrow payable"><span class="k" id="r-pay-label">Πληρωτέο στον προμηθευτή</span><span class="v mono" id="r-pay">0,00 &euro;</span></div>
+          <div class="pctnote" id="r-note">Κρατήσεις: 0,00% επί της καθαρής αξίας</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="primary" id="btn-copy">Αντιγραφή σύνοψης</button>
+        <button type="button" class="ghost" id="btn-print">Εκτύπωση</button>
+      </div>
+      <div id="copied"></div>
+    </div>
+
+  </div>
+</div>
+
+<details class="mobile-help">
+  <summary>Χρήση &amp; εγκατάσταση στο κινητό</summary>
+  <div class="mh-body">
+    <p><b>Αν «κολλάει» μόλις πληκτρολογείς στο iPhone:</b> το άνοιξες μέσα από την εφαρμογή «Αρχεία». Εκεί το iOS δείχνει απλή προεπισκόπηση που δεν εκτελεί σωστά τα πεδία. Δεν φταίει το αρχείο ούτε το δίκτυο. Χρειάζεται να ανοίξει από διεύθυνση ιστού (βλ. παρακάτω).</p>
+    <p><b>Γιατί δεν εμφανίζεται το Safari στην «Κοινή χρήση»:</b> το iOS δεν προσφέρει «άνοιγμα τοπικού αρχείου στο Safari». Ένα αρχείο που βρίσκεται μόνο στο κινητό δεν μπορεί να γίνει εφαρμογή — είναι περιορισμός της Apple, όχι κάτι που διορθώνεται με κώδικα.</p>
+    <p><b>Για εικονίδιο στην αρχική οθόνη (ανοίγει σαν εφαρμογή, χωρίς μπάρα, και εκτός δικτύου):</b> ανέβασε <i>μία φορά</i> αυτό το αρχείο σε δωρεάν φιλοξενία με διεύθυνση https (π.χ. GitHub Pages ή μια υπηρεσία που δέχεται μεταφόρτωση αρχείου). Άνοιξε τη διεύθυνση που θα πάρεις στο <b>Safari</b> → κουμπί Κοινής χρήσης → <b>Προσθήκη στην αρχική οθόνη</b>. Έτσι αποκτάς εικονίδιο «Κρατήσεις» και ανοίγει σαν κανονική εφαρμογή.</p>
+    <p><b>Στους υπηρεσιακούς υπολογιστές (offline):</b> δεν χρειάζεται τίποτα — άνοιξε το αρχείο με διπλό κλικ· δουλεύει τοπικά.</p>
+  </div>
+</details>
+
+<footer class="note">
+  <p>Κατά ΤΕ 61-4/2022 (με Τ1, ισχύς 5 Ιουν 26): ΦΕ 1% καύσιμα/καπνικά, 4% λοιπά αγαθά, 8% υπηρεσίες, 20% συμβουλευτικές, 3% τεχνικά έργα — υπολογιζόμενος επί καθαρής αξίας μετά την αφαίρεση κρατήσεων (Παράρτημα «Η»)· απαλλαγή &le;150&euro; χωρίς σύμβαση (αγαθά/υπηρεσίες) και &le;300&euro; (συμβουλευτικές/έργα, φορολογικοί κάτοικοι Ελλάδας) &middot; Ε.Α.ΔΗ.ΣΥ. 0,1% για καθαρή &gt;1.000&euro; &middot; Κράτηση ν.5223/25 άρθ.37: 6% &middot; Οι κρατήσεις στρογγυλοποιούνται ανά γραμμή στο λεπτό. Τα αποτελέσματα είναι βοηθητικά — ισχύουν οι κείμενες διατάξεις.</p>
+</footer>
+
+<div id="ks-print"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  function $(id) { return document.getElementById(id); }
+
+  /* ---------- Αριθμητικά βοηθήματα ---------- */
+  function round2(x) { return Math.round((x + 1e-9) * 100) / 100; }
+
+  // Δέχεται "1.234,56", "1234,56", "1234.56"
+  function parseAmount(s) {
+    if (!s) return 0;
+    s = String(s).replace(/\s|€/g, "");
+    if (s.indexOf(",") !== -1 && s.indexOf(".") !== -1) {
+      s = s.replace(/\./g, "").replace(",", ".");
+    } else if (s.indexOf(",") !== -1) {
+      s = s.replace(",", ".");
+    }
+    var n = parseFloat(s);
+    return isFinite(n) && n > 0 ? n : 0;
+  }
+
+  // Μορφοποίηση σε ελληνικό φορμά: 1.234,56
+  function fmt(n) {
+    n = round2(n);
+    var neg = n < 0;
+    n = Math.abs(n);
+    var parts = n.toFixed(2).split(".");
+    var i = parts[0], out = "";
+    while (i.length > 3) { out = "." + i.slice(-3) + out; i = i.slice(0, -3); }
+    out = i + out;
+    return (neg ? "-" : "") + out + "," + parts[1];
+  }
+  function fmtE(n) { return fmt(n) + " €"; }
+  function fmtPct(n) {
+    return String(Math.round(n * 1000) / 1000).replace(".", ",");
+  }
+
+  /* ---------- Συντελεστές & Σενάρια (κατά ΤΕ 61-4/2022 με Τ1) ---------- */
+  var FE_RATES = { fuel: 1, goods: 4, services: 8, consulting: 20, works: 3 };
+
+  var SCENARIOS = {
+    none: { note: "" },
+    std_c: {
+      set: { mil: true, contract: true, kind: "goods" },
+      note: "Σύμβαση ΥΠΕΘΑ: κράτηση 6% (άρθ.37 ν.5223/25) και Ε.Α.ΔΗ.ΣΥ. (>1.000€) ενεργές. ΦΕ παρακρατείται πάντα, ακόμα και ≤150€. Προεπιλογή: αγαθά 4% — άλλαξέ το αν είναι υπηρεσία."
+    },
+    std_nc: {
+      set: { mil: false, contract: false, kind: "goods" },
+      note: "Μικροδαπάνη χωρίς σύμβαση: χωρίς κράτηση 6%. ΦΕ μόνο για καθαρή αξία άνω των 150€. Προεπιλογή: αγαθά 4% — άλλαξέ το αν είναι υπηρεσία."
+    },
+    deko: {
+      set: { mil: false, eadisyStamp: false, kind: "services" },
+      fe0: "απαλλαγή ΔΕΚΟ — Παρ. «Η» §5β",
+      noEadisy: true,
+      note: "Ρεύμα, νερό, τηλέφωνο, γραμματόσημα, εισιτήρια: απαλλαγή ΦΕ (Παρ. «Η» §5β), χωρίς κρατήσεις δημοσίων συμβάσεων."
+    },
+    defense: {
+      set: { kind: "goods" },
+      fe0: "απαλλαγή πολεμικών βιομηχανιών — Παρ. «Η» §5γ",
+      note: "ΕΑΒ / ΕΒΟ / ΠΥΡΚΑΛ / ΕΛΒΟ: απαλλαγή ΦΕ (Παρ. «Η» §5γ). Λοιπές κρατήσεις κατά περίπτωση."
+    },
+    pharma: {
+      set: { kind: "goods" },
+      fe0: "απαλλαγή φαρμάκων/ειδών ασφαλισμένων — Παρ. «Η» §5ε",
+      note: "Φάρμακα, ορθοπεδικά, είδη για τη λειτουργία του οργανισμού: απαλλαγή ΦΕ (Παρ. «Η» §5ε)."
+    },
+    pde: {
+      pde: true,
+      note: "ΠΔΕ εκτός e-ΠΔΕ: οι κρατήσεις υπολογίζονται αλλά ΔΕΝ αφαιρούνται από την πληρωμή — τις αποδίδει ο δικαιούχος (Τμήμα 23 ΤΕ 61-4)."
+    },
+    sp: {
+      set: { mil: false, eadisyStamp: false, kind: "goods" },
+      spMode: true,
+      note: "Διατακτική ιδίων πόρων μέσω Στρατιωτικού Πρατηρίου: το καταλογιστέο επιβαρύνεται με κρατήσεις δαπάνης (÷1,16) και το πληρωτέο διατακτικής με ΦΠΑ + ποσοστό υπέρ ΣΠ (÷1,34 για ΦΠΑ 24%). Ο προμηθευτής τιμολογεί: καθαρή + ΦΠΑ."
+    },
+    eep_resale: {
+      set: { mil: false, eadisyStamp: false, kind: "goods" },
+      noEadisy: true,
+      note: "Κεφάλαια ΕΕΠ, αγορά προς μεταπώληση ή επ' ωφελεία τους: δεν διενεργούνται κρατήσεις υπέρ Δημοσίου και τρίτων (ν.δ.721/70 άρθ.18)."
+    },
+    eep_other: {
+      set: { mil: true },
+      note: "Κεφάλαια ΕΕΠ, λοιπές δαπάνες: κανονικές κρατήσεις προσαυξημένες κατά ΕΚΟΕΜΣ/ΒΑΜ — προσάρμοσε το βασικό ποσοστό στη «Ρύθμιση ποσοστών κράτησης»."
+    }
+  };
+
+  /* ---------- Ανάγνωση ρυθμίσεων ---------- */
+  function readConfig() {
+    var vatVal = 24;
+    var radios = document.getElementsByName("vat");
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) { vatVal = radios[i].value; break; }
+    }
+    var vatPct;
+    if (vatVal === "x") {
+      vatPct = parseFloat($("vat-other").value);
+      if (!isFinite(vatPct) || vatPct < 0) vatPct = 0;
+    } else {
+      vatPct = parseFloat(vatVal);
+    }
+    return {
+      vatPct: vatPct,
+      kind: $("kind").value,
+      scenario: $("scenario").value,
+      contract: $("contract").checked,
+      eadisyStamp: $("eadisy-stamp").checked,
+      mil: $("mil").checked,
+      milBase: pctField("mil-base", 6),
+      milStamp: pctField("mil-stamp", 0),
+      milOga: pctField("mil-oga", 20),
+      spKrat: pctField("sp-krat", 16),
+      spYp: pctField("sp-yp", 10)
+    };
+  }
+  function pctField(id, def) {
+    var v = parseFloat($(id).value);
+    return (isFinite(v) && v >= 0) ? v : def;
+  }
+  function getMode() {
+    var radios = document.getElementsByName("amode");
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) return radios[i].value;
+    }
+    return "net";
+  }
+
+  /* ---------- Υπολογισμός (κατά ΤΕ 61-4/2022 με Τ1) ---------- */
+  function compute(inp) {
+    var scen = SCENARIOS[inp.scenario] || SCENARIOS.none;
+    var r = {};
+    r.vat = round2(inp.net * inp.vatPct / 100);
+    r.gross = round2(inp.net + r.vat);
+
+    // Ειδική ροή: Διατακτική ιδίων πόρων μέσω ΣΠ
+    if (scen.spMode) {
+      r.sp = true;
+      r.yp = round2(inp.net * inp.spYp / 100);
+      r.plid = round2(inp.net * (1 + inp.vatPct / 100 + inp.spYp / 100));
+      r.kat = round2(r.plid * (1 + inp.spKrat / 100));
+      r.krat = round2(r.kat - r.plid);
+      r.m1 = 0; r.m2 = 0; r.m3 = 0; r.e1 = 0; r.e2 = 0; r.e3 = 0;
+      r.eadisyOn = false; r.fe = 0; r.feBase = 0; r.fePct = 0;
+      r.feExempt = true; r.feExemptText = "διατακτική μέσω ΣΠ";
+      r.pde = false;
+      r.ded = round2(r.kat - r.gross);
+      r.pay = r.gross;
+      r.dedPct = r.kat > 0 ? (r.ded / r.kat * 100) : 0;
+      return r;
+    }
+
+    // 1. Κράτηση ν.5223/25 (άρθ.37)
+    r.m1 = inp.mil ? round2(inp.net * inp.milBase / 100) : 0;
+    r.m2 = inp.mil ? round2(r.m1 * inp.milStamp / 100) : 0;
+    r.m3 = inp.mil ? round2(r.m2 * inp.milOga / 100) : 0;
+
+    // 2. Ε.Α.ΔΗ.ΣΥ. (αυτόματα για καθαρή >1.000€, εκτός αν το σενάριο την εξαιρεί)
+    r.eadisyOn = inp.net > 1000 && !scen.noEadisy;
+    r.e1 = r.eadisyOn ? round2(inp.net * 0.001) : 0;
+    r.e2 = (r.eadisyOn && inp.eadisyStamp) ? round2(r.e1 * 0.03) : 0;
+    r.e3 = (r.eadisyOn && inp.eadisyStamp) ? round2(r.e2 * 0.20) : 0;
+
+    // 3. ΦΕ επί καθαρής αξίας ΜΕΤΑ την αφαίρεση κρατήσεων (Παράρτημα «Η»)
+    var otherDed = round2(r.m1 + r.m2 + r.m3 + r.e1 + r.e2 + r.e3);
+    r.feBase = round2(inp.net - otherDed);
+    if (r.feBase < 0) r.feBase = 0;
+    r.fePct = FE_RATES[inp.kind] || 4;
+    if (scen.fe0) {
+      r.feExempt = true;
+      r.feExemptText = scen.fe0;
+    } else if (inp.kind === "consulting" || inp.kind === "works") {
+      r.feExempt = (inp.net <= 300);
+      r.feExemptText = "συναλλαγή ≤300€";
+    } else {
+      r.feExempt = (inp.net <= 150 && !inp.contract);
+      r.feExemptText = "απαλλαγή ≤150€ χωρίς σύμβαση";
+    }
+    r.fe = (r.feExempt || inp.net === 0) ? 0 : round2(r.feBase * r.fePct / 100);
+
+    // 4. Σύνολα
+    r.pde = !!scen.pde;
+    r.ded = round2(otherDed + r.fe);
+    r.pay = r.pde ? round2(r.gross - r.fe) : round2(r.gross - r.ded);
+    r.dedPct = inp.net > 0 ? (r.ded / inp.net * 100) : 0;
+    return r;
+  }
+
+  /* ---------- Αντίστροφος υπολογισμός (από Μικτή ή Πληρωτέο) ---------- */
+  function solveNet(mode, amount, cfg) {
+    if (mode === "net") return { net: amount, exact: true, achieved: amount };
+    if (amount <= 0) return { net: 0, exact: true, achieved: 0 };
+
+    function valFor(net) {
+      var i = {}, k;
+      for (k in cfg) { if (cfg.hasOwnProperty(k)) i[k] = cfg[k]; }
+      i.net = net;
+      var r = compute(i);
+      if (mode === "gross") return r.gross;
+      return r.sp ? r.kat : r.pay;
+    }
+
+    // Αρχική εκτίμηση με διαδοχική διόρθωση
+    var est = amount / (1 + cfg.vatPct / 100);
+    for (var k = 0; k < 10; k++) {
+      var v = valFor(round2(est));
+      var diff = amount - v;
+      if (Math.abs(diff) < 0.005) break;
+      est += diff / (1 + cfg.vatPct / 100);
+      if (!(est > 0)) { est = 0; break; }
+    }
+
+    // Σάρωση ανά λεπτό γύρω από την εκτίμηση για ακριβές ταίριασμα
+    var c0 = Math.round(est * 100);
+    if (c0 < 0) c0 = 0;
+    var best = c0, bestDiff = Infinity, bestDist = Infinity, exacts = [];
+    for (var d = -400; d <= 400; d++) {
+      var c = c0 + d;
+      if (c < 0) continue;
+      var diff2 = Math.abs(round2(valFor(c / 100) - amount));
+      if (diff2 < 0.005) exacts.push(c);
+      if (diff2 < bestDiff - 1e-9 || (Math.abs(diff2 - bestDiff) <= 1e-9 && Math.abs(d) < bestDist)) {
+        bestDiff = diff2; best = c; bestDist = Math.abs(d);
+      }
+    }
+    var net = best / 100;
+    // Εναλλακτικές ακριβείς λύσεις (π.χ. εκατέρωθεν του κατωφλίου των 1.000€)
+    var alts = [];
+    for (var x = 0; x < exacts.length; x++) {
+      if (Math.abs(exacts[x] - best) > 2) alts.push(exacts[x] / 100);
+    }
+    return { net: net, exact: bestDiff < 0.005, achieved: valFor(net), alts: alts };
+  }
+
+  /* ---------- Απόδοση ---------- */
+  function setRow(rowId, valId, amount, show) {
+    var row = $(rowId);
+    row.style.display = show ? "" : "none";
+    if (show) {
+      $(valId).innerHTML = fmtE(amount).replace(" €", " &euro;");
+      row.className = row.className.replace(/\s*zero/, "") + (amount === 0 ? " zero" : "");
+    }
+  }
+
+  var last = null; // για την αντιγραφή σύνοψης
+
+  function render() {
+    var cfg = readConfig();
+    var mode = getMode();
+    var amount = parseAmount($("net").value);
+    var solved = solveNet(mode, amount, cfg);
+
+    var inp = {}, k;
+    for (k in cfg) { if (cfg.hasOwnProperty(k)) inp[k] = cfg[k]; }
+    inp.net = (mode === "net") ? amount : solved.net;
+
+    var r = compute(inp);
+    last = { inp: inp, r: r, mode: mode, amount: amount, solved: solved };
+    var isSp = !!r.sp;
+
+    // Εναλλαγή διεπαφής για το σενάριο ΣΠ
+    $("std-controls").style.display = isSp ? "none" : "";
+    $("kind-field").style.display = isSp ? "none" : "";
+    $("spcfg").className = isSp ? "open" : "";
+    $("am-pay-label").innerHTML = isSp ? "Καταλογιστέο" : "Πληρωτέο";
+
+    // Ετικέτα ποσού & σημείωση αντίστροφου υπολογισμού
+    var labels = isSp
+      ? { net: "Καθαρή αξία τιμολογίου (€)", gross: "Πληρωτέο τιμολογίου (€)", pay: "Καταλογιστέο ποσό (€)" }
+      : { net: "Καθαρή αξία (€)", gross: "Μικτή αξία με ΦΠΑ (€)", pay: "Πληρωτέο ποσό (€)" };
+    $("amount-label").innerHTML = labels[mode];
+    var sn = "";
+    if (mode !== "net" && amount > 0) {
+      sn = "→ Καθαρή αξία: <b>" + fmt(inp.net) + " €</b>";
+      if (!solved.exact) {
+        sn += " — το ποσό δεν προκύπτει ακριβώς με τις τρέχουσες κρατήσεις: πλησιέστερα, " +
+              (mode === "gross" ? "μικτό " : (isSp ? "καταλογιστέο " : "πληρωτέο ")) + fmt(solved.achieved) +
+              " € (διαφορά " + fmt(round2(amount - solved.achieved)) + " €). Έλεγξε σενάριο/διακόπτες.";
+      }
+      if (solved.alts && solved.alts.length) {
+        var altStr = [];
+        for (var a2 = 0; a2 < solved.alts.length && a2 < 2; a2++) altStr.push(fmt(solved.alts[a2]) + " €");
+        sn += " Προσοχή: το ίδιο ποσό προκύπτει και με καθαρή " + altStr.join(" ή ") + " — επιβεβαίωσε με το τιμολόγιο.";
+      }
+    }
+    $("solve-note").innerHTML = sn;
+    $("solve-note").className = (mode !== "net" && amount > 0 && !solved.exact) ? "hint alert" : "hint";
+
+    // Σημείωση σεναρίου
+    $("scenario-note").innerHTML = (SCENARIOS[cfg.scenario] || {}).note || "";
+
+    $("r-net").innerHTML = fmtE(inp.net).replace(" €", " &euro;");
+    $("r-vatpct").innerHTML = fmtPct(inp.vatPct) + "%";
+    $("r-vat").innerHTML = fmtE(r.vat).replace(" €", " &euro;");
+    $("r-gross").innerHTML = fmtE(r.gross).replace(" €", " &euro;");
+    $("row-gross").style.display = isSp ? "none" : "";
+    $("row-dhead").style.display = isSp ? "none" : "";
+
+    // Γραμμές διατακτικής ΣΠ
+    setRow("row-sp-kat", "r-sp-kat", isSp ? r.kat : 0, isSp);
+    setRow("row-sp-krat", "r-sp-krat", isSp ? r.krat : 0, isSp);
+    setRow("row-sp-plid", "r-sp-plid", isSp ? r.plid : 0, isSp);
+    setRow("row-sp-yp", "r-sp-yp", isSp ? r.yp : 0, isSp);
+    if (isSp) {
+      $("r-sp-kratpct").innerHTML = fmtPct(inp.spKrat);
+      $("r-sp-yppct").innerHTML = fmtPct(inp.spYp);
+    }
+
+    // Κράτηση ν.5223/25
+    $("r-m1pct").innerHTML = fmtPct(inp.milBase) + "%";
+    $("r-m2pct").innerHTML = fmtPct(inp.milStamp);
+    $("r-m3pct").innerHTML = fmtPct(inp.milOga);
+    setRow("row-m1", "r-m1", r.m1, !isSp && inp.mil);
+    setRow("row-m2", "r-m2", r.m2, !isSp && inp.mil && inp.milStamp > 0);
+    setRow("row-m3", "r-m3", r.m3, !isSp && inp.mil && inp.milStamp > 0 && inp.milOga > 0);
+
+    // ΕΑΔΗΣΥ
+    setRow("row-e1", "r-e1", r.e1, r.eadisyOn);
+    setRow("row-e2", "r-e2", r.e2, r.eadisyOn && inp.eadisyStamp);
+    setRow("row-e3", "r-e3", r.e3, r.eadisyOn && inp.eadisyStamp);
+
+    // ΦΕ (επί καθαρής μετά κρατήσεων)
+    $("r-fepct").innerHTML = r.feExempt
+      ? "0% — " + r.feExemptText
+      : fmtPct(r.fePct) + "% × " + fmt(r.feBase) + " €";
+    setRow("row-fe", "r-fe", r.fe, !isSp);
+
+    $("r-pay-label").innerHTML = isSp ? "Πληρωτέο τιμολογίου (προμηθευτής)" : "Πληρωτέο στον προμηθευτή";
+    $("r-ded-label").innerHTML = isSp
+      ? "Σύνολο επιβαρύνσεων (κρατήσεις + υπέρ ΣΠ)"
+      : (r.pde ? "Σύνολο κρατήσεων <small>(αποδίδονται από τον δικαιούχο)</small>" : "Σύνολο κρατήσεων");
+    $("r-ded").innerHTML = fmtE(r.ded).replace(" €", " &euro;");
+    $("r-pay").innerHTML = fmtE(r.pay).replace(" €", " &euro;");
+    $("r-note").innerHTML = isSp
+      ? "Επιβαρύνσεις: " + fmtPct(Math.round(r.dedPct * 100) / 100) + "% επί του καταλογιστέου"
+      : "Κρατήσεις: " + fmtPct(Math.round(r.dedPct * 100) / 100) + "% επί της καθαρής αξίας" + (r.pde ? " — ΠΔΕ: παρακρατείται μόνο ο ΦΕ" : "");
+
+    // Σύνολο κράτησης στο κείμενο του διακόπτη
+    $("miltotal").innerHTML = fmtPct(milEffectiveTotal(inp.milBase, inp.milStamp, inp.milOga));
+
+    // Υπόδειξη για την κράτηση ν.5223/25
+    $("mil-hint").style.display = (!isSp && inp.net > 2500 && inp.contract && !inp.mil) ? "" : "none";
+
+    if (window.__kratHook) { try { window.__kratHook(); } catch (e) {} }
+  }
+
+  function milEffectiveTotal(base, stamp, oga) {
+    return base * (1 + (stamp / 100) * (1 + oga / 100));
+  }
+
+  /* ---------- Σύνοψη κειμένου ---------- */
+  function summaryText() {
+    if (!last) return "";
+    var inp = last.inp, r = last.r;
+    var L = [];
+    if (r.sp) {
+      L.push("ΔΙΑΤΑΚΤΙΚΗ ΙΔΙΩΝ ΠΟΡΩΝ ΜΕΣΩ ΣΠ");
+      L.push("--------------------------------");
+      L.push("Καταλογιστέο (ιδίων πόρων): " + fmtE(r.kat));
+      L.push("- Κρατήσεις δαπάνης " + fmtPct(inp.spKrat) + "%: " + fmtE(r.krat));
+      L.push("Πληρωτέο διατακτικής: " + fmtE(r.plid));
+      L.push("- Υπέρ ΣΠ " + fmtPct(inp.spYp) + "% επί καθαρής: " + fmtE(r.yp));
+      L.push("Καθαρή αξία τιμολογίου: " + fmtE(inp.net));
+      L.push("ΦΠΑ " + fmtPct(inp.vatPct) + "%: " + fmtE(r.vat));
+      L.push("");
+      L.push("ΠΛΗΡΩΤΕΟ ΤΙΜΟΛΟΓΙΟΥ (ΠΡΟΜΗΘΕΥΤΗΣ): " + fmtE(r.pay));
+      return L.join("\n");
+    }
+    L.push("ΥΠΟΛΟΓΙΣΜΟΣ ΚΡΑΤΗΣΕΩΝ ΤΙΜΟΛΟΓΙΟΥ (ΤΕ 61-4/2022 με Τ1)");
+    L.push("--------------------------------");
+    L.push("Καθαρή αξία: " + fmtE(inp.net));
+    L.push("ΦΠΑ " + fmtPct(inp.vatPct) + "%: " + fmtE(r.vat));
+    L.push("Μικτή αξία: " + fmtE(r.gross));
+    L.push("");
+    L.push("Κρατήσεις:");
+    if (inp.mil) {
+      L.push("- Κράτηση ν.5223/25 (άρθ.37) " + fmtPct(inp.milBase) + "%: " + fmtE(r.m1));
+      if (r.m2 > 0) L.push("  · Χαρτόσημο " + fmtPct(inp.milStamp) + "%: " + fmtE(r.m2));
+      if (r.m3 > 0) L.push("  · ΟΓΑ χαρτοσήμου " + fmtPct(inp.milOga) + "%: " + fmtE(r.m3));
+    }
+    if (r.eadisyOn) {
+      L.push("- Ε.Α.ΔΗ.ΣΥ. 0,1%: " + fmtE(r.e1));
+      if (inp.eadisyStamp) {
+        L.push("  · Χαρτόσημο 3%: " + fmtE(r.e2));
+        L.push("  · ΟΓΑ χαρτοσήμου 20%: " + fmtE(r.e3));
+      }
+    }
+    L.push("- ΦΕ " + (r.feExempt ? "0% (" + r.feExemptText + ")" : fmtPct(r.fePct) + "% επί " + fmt(r.feBase) + " €") + ": " + fmtE(r.fe));
+    L.push("ΣΥΝΟΛΟ ΚΡΑΤΗΣΕΩΝ: " + fmtE(r.ded));
+    if (r.pde) L.push("(ΠΔΕ: οι κρατήσεις δεν αφαιρούνται από την πληρωμή — αποδίδονται από τον δικαιούχο)");
+    L.push("");
+    L.push("ΠΛΗΡΩΤΕΟ ΣΤΟΝ ΠΡΟΜΗΘΕΥΤΗ: " + fmtE(r.pay));
+    return L.join("\n");
+  }
+
+  function copySummary() {
+    var text = summaryText();
+    var done = function () {
+      $("copied").innerHTML = "Η σύνοψη αντιγράφηκε.";
+      setTimeout(function () { $("copied").innerHTML = ""; }, 2500);
+    };
+    var fallback = function () {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand("copy"); done(); } catch (e) {
+        $("copied").innerHTML = "Η αντιγραφή δεν υποστηρίζεται εδώ.";
+      }
+      document.body.removeChild(ta);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  /* ---------- Σύνδεση συμβάντων ---------- */
+  function on(el, ev, fn) {
+    if (el.addEventListener) el.addEventListener(ev, fn, false);
+    else el.attachEvent("on" + ev, fn); // πολύ παλιοί browsers
+  }
+
+  var ids = ["net", "vat-other", "kind", "contract", "eadisy-stamp", "mil", "mil-base", "mil-stamp", "mil-oga", "sp-krat", "sp-yp"];
+  for (var i = 0; i < ids.length; i++) {
+    on($(ids[i]), "input", render);
+    on($(ids[i]), "change", render);
+  }
+  var vr = document.getElementsByName("vat");
+  for (var j = 0; j < vr.length; j++) {
+    on(vr[j], "change", function () {
+      var w = $("vat-other-wrap");
+      w.className = $("vatx").checked ? "open" : "";
+      render();
+    });
+  }
+  var ar = document.getElementsByName("amode");
+  for (var q = 0; q < ar.length; q++) {
+    on(ar[q], "change", render);
+  }
+  on($("scenario"), "change", function () {
+    var s = SCENARIOS[$("scenario").value];
+    if (s && s.set) {
+      if (s.set.mil !== undefined) $("mil").checked = s.set.mil;
+      if (s.set.contract !== undefined) $("contract").checked = s.set.contract;
+      if (s.set.eadisyStamp !== undefined) $("eadisy-stamp").checked = s.set.eadisyStamp;
+      if (s.set.kind !== undefined) $("kind").value = s.set.kind;
+    }
+    render();
+  });
+
+  on($("milcfg-btn"), "click", function () {
+    var c = $("milcfg");
+    c.className = (c.className === "open") ? "" : "open";
+  });
+  on($("btn-copy"), "click", copySummary);
+  on($("btn-print"), "click", function () { window.print(); });
+
+  /* ---------- Ημερομηνία & πρώτη απόδοση ---------- */
+  (function setDate() {
+    var d = new Date();
+    function p(n) { return n < 10 ? "0" + n : n; }
+    $("rdate").innerHTML = "Υπολογισμός " + p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear();
+  })();
+
+  // Δημόσιο API για τα πρόσθετα (Κατάσταση Πληρωμής, Δικαιολογητικά)
+  window.KRAT = {
+    compute: compute,
+    readConfig: readConfig,
+    parseAmount: parseAmount,
+    fmt: fmt,
+    fmtE: fmtE,
+    fmtPct: fmtPct,
+    round2: round2,
+    getLast: function () { return last; }
+  };
+
+  render();
+})();
+</script>
+
+<script>
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  var K = window.KRAT;
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function on(el, ev, fn) {
+    if (el.addEventListener) el.addEventListener(ev, fn, false);
+    else el.attachEvent("on" + ev, fn);
+  }
+
+  /* ---------- Ποσά ολογράφως (ελληνικά) ---------- */
+  var U_N = ["", "ΕΝΑ", "ΔΥΟ", "ΤΡΙΑ", "ΤΕΣΣΕΡΑ", "ΠΕΝΤΕ", "ΕΞΙ", "ΕΠΤΑ", "ΟΚΤΩ", "ΕΝΝΕΑ"];
+  var U_F = ["", "ΜΙΑ", "ΔΥΟ", "ΤΡΕΙΣ", "ΤΕΣΣΕΡΙΣ", "ΠΕΝΤΕ", "ΕΞΙ", "ΕΠΤΑ", "ΟΚΤΩ", "ΕΝΝΕΑ"];
+  var TENS = ["", "ΔΕΚΑ", "ΕΙΚΟΣΙ", "ΤΡΙΑΝΤΑ", "ΣΑΡΑΝΤΑ", "ΠΕΝΗΝΤΑ", "ΕΞΗΝΤΑ", "ΕΒΔΟΜΗΝΤΑ", "ΟΓΔΟΝΤΑ", "ΕΝΕΝΗΝΤΑ"];
+  var H_N = ["", "ΕΚΑΤΟΝ", "ΔΙΑΚΟΣΙΑ", "ΤΡΙΑΚΟΣΙΑ", "ΤΕΤΡΑΚΟΣΙΑ", "ΠΕΝΤΑΚΟΣΙΑ", "ΕΞΑΚΟΣΙΑ", "ΕΠΤΑΚΟΣΙΑ", "ΟΚΤΑΚΟΣΙΑ", "ΕΝΝΙΑΚΟΣΙΑ"];
+  var H_F = ["", "ΕΚΑΤΟΝ", "ΔΙΑΚΟΣΙΕΣ", "ΤΡΙΑΚΟΣΙΕΣ", "ΤΕΤΡΑΚΟΣΙΕΣ", "ΠΕΝΤΑΚΟΣΙΕΣ", "ΕΞΑΚΟΣΙΕΣ", "ΕΠΤΑΚΟΣΙΕΣ", "ΟΚΤΑΚΟΣΙΕΣ", "ΕΝΝΙΑΚΟΣΙΕΣ"];
+
+  function under1000(n, fem) {
+    var u = fem ? U_F : U_N, hh = fem ? H_F : H_N, out = [];
+    var c = Math.floor(n / 100), rest = n % 100;
+    if (c) out.push(c === 1 && rest === 0 ? "ΕΚΑΤΟ" : hh[c]);
+    if (rest >= 10 && rest <= 19) {
+      if (rest === 10) out.push("ΔΕΚΑ");
+      else if (rest === 11) out.push("ΕΝΤΕΚΑ");
+      else if (rest === 12) out.push("ΔΩΔΕΚΑ");
+      else out.push("ΔΕΚΑ" + u[rest - 10]);
+    } else {
+      var t = Math.floor(rest / 10), un = rest % 10;
+      if (t) out.push(TENS[t]);
+      if (un) out.push(u[un]);
+    }
+    return out.join(" ");
+  }
+  function intWords(n) {
+    n = Math.floor(n);
+    if (n === 0) return "ΜΗΔΕΝ";
+    var out = [];
+    var mil = Math.floor(n / 1000000);
+    var th = Math.floor((n % 1000000) / 1000);
+    var rest = n % 1000;
+    if (mil) out.push(mil === 1 ? "ΕΝΑ ΕΚΑΤΟΜΜΥΡΙΟ" : under1000(mil, false) + " ΕΚΑΤΟΜΜΥΡΙΑ");
+    if (th) out.push(th === 1 ? "ΧΙΛΙΑ" : under1000(th, true) + " ΧΙΛΙΑΔΕΣ");
+    if (rest) out.push(under1000(rest, false));
+    return out.join(" ");
+  }
+  function amountWords(x) {
+    x = K.round2(x);
+    var e = Math.floor(x + 1e-9);
+    var c = Math.round((x - e) * 100);
+    var s = intWords(e) + " ΕΥΡΩ";
+    if (c > 0) s += " ΚΑΙ " + intWords(c) + (c === 1 ? " ΛΕΠΤΟ" : " ΛΕΠΤΑ");
+    return s;
+  }
+
+  /* ---------- Τιμολόγια Κατάστασης ---------- */
+  function addInvRow() {
+    var box = $("ks-invs");
+    var div = document.createElement("div");
+    div.className = "ks-row";
+    div.innerHTML = '<input class="txtin ks-num" type="text" placeholder="Αρ. παραστατικού (π.χ. ΤΙΜ 1234/2026)">' +
+                    '<input class="txtin ks-val" type="text" inputmode="decimal" autocomplete="off" placeholder="Καθαρή αξία">' +
+                    '<button type="button" class="rm" title="Αφαίρεση">&times;</button>';
+    box.appendChild(div);
+    var ins = div.getElementsByTagName("input");
+    on(ins[1], "input", updatePreview);
+    on(div.getElementsByTagName("button")[0], "click", function () {
+      box.removeChild(div);
+      updatePreview();
+    });
+  }
+  function readInvoices() {
+    var box = $("ks-invs");
+    var rows = box.getElementsByTagName("div");
+    var out = [];
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i].className !== "ks-row") continue;
+      var ins = rows[i].getElementsByTagName("input");
+      var net = K.parseAmount(ins[1].value);
+      if (net > 0) out.push({ num: ins[0].value || "\u2014", net: net });
+    }
+    return out;
+  }
+
+  function dedLines(inp, r) {
+    var L = [];
+    if (inp.mil) {
+      L.push({ lab: "ΚΡΑΤΗΣΗ ν.5223/25 (ΑΡΘ.37) " + K.fmtPct(inp.milBase) + "%", amt: r.m1 });
+      if (r.m2 > 0) L.push({ lab: "ΧΑΡΤΟΣΗΜΟ " + K.fmtPct(inp.milStamp) + "%", amt: r.m2 });
+      if (r.m3 > 0) L.push({ lab: "ΟΓΑ ΧΑΡΤΟΣΗΜΟΥ " + K.fmtPct(inp.milOga) + "%", amt: r.m3 });
+    }
+    if (r.eadisyOn) {
+      L.push({ lab: "ΕΑΔΗΣΥ 0,1%", amt: r.e1 });
+      if (inp.eadisyStamp && r.e2 > 0) L.push({ lab: "ΧΑΡΤΟΣΗΜΟ ΕΑΔΗΣΥ 3%", amt: r.e2 });
+      if (inp.eadisyStamp && r.e3 > 0) L.push({ lab: "ΟΓΑ ΧΑΡΤ. ΕΑΔΗΣΥ 20%", amt: r.e3 });
+    }
+    if (!L.length) L.push({ lab: "\u2014", amt: 0 });
+    return L;
+  }
+
+  function buildKsHTML(cfg, invs) {
+    var per = [], totalLines = 0;
+    var sums = { net: 0, vat: 0, gross: 0, other: 0, base: 0, fe: 0, pay: 0 };
+    var i, k;
+    for (i = 0; i < invs.length; i++) {
+      var inp = {};
+      for (k in cfg) { if (cfg.hasOwnProperty(k)) inp[k] = cfg[k]; }
+      inp.net = invs[i].net;
+      var r = K.compute(inp);
+      var lines = dedLines(inp, r);
+      var other = K.round2(r.ded - r.fe);
+      per.push({ num: invs[i].num, inp: inp, r: r, lines: lines, other: other });
+      totalLines += lines.length;
+      sums.net = K.round2(sums.net + inp.net);
+      sums.vat = K.round2(sums.vat + r.vat);
+      sums.gross = K.round2(sums.gross + r.gross);
+      sums.other = K.round2(sums.other + other);
+      sums.base = K.round2(sums.base + r.feBase);
+      sums.fe = K.round2(sums.fe + r.fe);
+      sums.pay = K.round2(sums.pay + r.pay);
+    }
+
+    var ben = esc($("ks-ben").value), benAddr = esc($("ks-ben-addr").value);
+    var afm = esc($("ks-afm").value), iban = esc($("ks-iban").value);
+    var tel = esc($("ks-tel").value), ale = esc($("ks-ale").value);
+    var unit = esc($("ks-unit").value).replace(/\n/g, "<br>");
+    var d = new Date();
+    function pz(n) { return n < 10 ? "0" + n : n; }
+    var topos = $("ks-topos").value;
+    var dateStr = (topos ? esc(topos) + ", " : "") + pz(d.getDate()) + "/" + pz(d.getMonth() + 1) + "/" + d.getFullYear();
+
+    var rowsHtml = "", first = true;
+    for (i = 0; i < per.length; i++) {
+      var p = per[i];
+      for (var L = 0; L < p.lines.length; L++) {
+        var lastL = (L === p.lines.length - 1);
+        rowsHtml += "<tr>";
+        if (first) {
+          rowsHtml += '<td rowspan="' + totalLines + '" class="ben">' + ben +
+                      (benAddr ? "<br>" + benAddr : "") +
+                      (afm ? "<br>ΑΦΜ: " + afm : "") + "</td>";
+          first = false;
+        }
+        rowsHtml += "<td>" + esc(p.num) + "</td>";
+        rowsHtml += '<td class="num">' + (L === 0 ? K.fmt(p.inp.net) + "\u20ac" : "") + "</td>";
+        rowsHtml += "<td>" + esc(p.lines[L].lab) + "</td>";
+        rowsHtml += '<td class="num">' + (p.lines[L].lab === "\u2014" ? "-" : K.fmt(p.lines[L].amt) + "\u20ac") + "</td>";
+        rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.other) + "\u20ac" : "") + "</td>";
+        rowsHtml += '<td class="num">' + (lastL ? "-" : "") + "</td>";
+        rowsHtml += '<td class="num">' + (lastL ? "-" : "") + "</td>";
+        rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.r.feBase) + "\u20ac" : "") + "</td>";
+        rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.r.fe) + "\u20ac" : "") + "</td>";
+        rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.r.pay) + "\u20ac" : "") + "</td>";
+        rowsHtml += "</tr>";
+      }
+    }
+    rowsHtml += '<tr><td><b>Συν. Παραστατικών</b></td><td></td><td class="num"><b>' + K.fmt(sums.net) + '\u20ac</b></td><td colspan="8"></td></tr>';
+    rowsHtml += '<tr><td><b>ΦΠΑ ' + K.fmtPct(cfg.vatPct) + '%</b></td><td></td><td class="num"><b>' + K.fmt(sums.vat) + '\u20ac</b></td><td colspan="8"></td></tr>';
+    rowsHtml += '<tr><td><b>Γενικό Σύνολο</b></td><td></td><td class="num"><b>' + K.fmt(sums.gross) + '\u20ac</b></td><td colspan="8"></td></tr>';
+    rowsHtml += '<tr><td><b>ΣΥΝΟΛΟ</b></td><td></td><td class="num"><b>' + K.fmt(sums.gross) + '\u20ac</b></td><td></td><td></td>' +
+                '<td class="num"><b>' + K.fmt(sums.other) + '\u20ac</b></td><td class="num">-</td><td class="num">-</td>' +
+                '<td class="num"><b>' + K.fmt(sums.base) + '\u20ac</b></td><td class="num"><b>' + K.fmt(sums.fe) + '\u20ac</b></td>' +
+                '<td class="num"><b>' + K.fmt(sums.pay) + '\u20ac</b></td></tr>';
+
+    return '<div class="ks-head"><div></div><div class="ks-unit">' + unit +
+           "<br>Τηλεφ. " + tel + "<br>" + dateStr + "</div></div>" +
+           '<div class="ks-title">ΚΑΤΑΣΤΑΣΗ ΠΛΗΡΩΜΗΣ</div>' +
+           '<div class="ks-meta">' +
+           "ΓΙΑ ΤΟΝ ΔΙΚΑΙΟΥΧΟ: <b>" + ben + "</b>" + (afm ? ", ΑΦΜ: " + afm : "") + "<br>" +
+           (iban ? "IBAN: " + iban + "<br>" : "") +
+           "ΠΟΣΟΥ (ολογράφως): <u>" + amountWords(sums.pay) + " (" + K.fmt(sums.pay) + "\u20ac)</u><br>" +
+           "ΛΟΓΩ (αιτιολογία δαπάνης): " + esc($("ks-logo").value) + "<br>" +
+           "ΕΙΔΙΚΟΣ ΦΟΡΕΑΣ: " + esc($("ks-ef").value) + (ale ? ", ΑΛΕ " + ale : "") +
+           "</div>" +
+           "<table><thead><tr>" +
+           "<th>Δικαιούχος</th><th>Αριθμός<br>Παραστατικού</th><th>Αξία<br>Παραστατικού</th><th>Κράτηση (%)</th><th>Ποσό<br>Κράτησης</th><th>Σύνολο<br>Κρατήσεων</th><th>Τόκος</th><th>Πρόστιμο</th><th>Καθαρό<br>Ποσό</th><th>Φόρος<br>(ΦΕ)</th><th>Καθαρό<br>Πληρωτέο</th>" +
+           "</tr></thead><tbody>" + rowsHtml + "</tbody></table>" +
+           '<div class="ks-sign">-Ο-<br>Διοικητής/Διευθυντής</div>';
+  }
+
+  function updatePreview() {
+    var el = $("ks-prev");
+    var cfg = K.readConfig();
+    var invs = readInvoices();
+    if (!invs.length) { el.innerHTML = ""; return; }
+    if (cfg.scenario === "sp") {
+      el.innerHTML = "Η Κατάσταση Πληρωμής αφορά τη ροή δημοσίων συμβάσεων — άλλαξε σενάριο δαπάνης.";
+      return;
+    }
+    var pay = 0, gross = 0, i, k;
+    for (i = 0; i < invs.length; i++) {
+      var inp = {};
+      for (k in cfg) { if (cfg.hasOwnProperty(k)) inp[k] = cfg[k]; }
+      inp.net = invs[i].net;
+      var r = K.compute(inp);
+      pay = K.round2(pay + r.pay);
+      gross = K.round2(gross + r.gross);
+    }
+    el.innerHTML = invs.length + " τιμολόγι" + (invs.length === 1 ? "ο" : "α") +
+      " — Γενικό σύνολο: <b>" + K.fmt(gross) + " \u20ac</b> \u00b7 Καθαρό πληρωτέο: <b>" + K.fmt(pay) + " \u20ac</b>";
+  }
+
+  function printKS() {
+    var warn = $("ks-warn");
+    warn.innerHTML = "";
+    var cfg = K.readConfig();
+    if (cfg.scenario === "sp") {
+      warn.innerHTML = "Η Κατάσταση Πληρωμής αφορά δαπάνες δημοσίων συμβάσεων — άλλαξε το σενάριο δαπάνης.";
+      return;
+    }
+    var invs = readInvoices();
+    if (!invs.length) {
+      warn.innerHTML = "Πρόσθεσε τουλάχιστον ένα τιμολόγιο με καθαρή αξία.";
+      return;
+    }
+    $("ks-print").innerHTML = buildKsHTML(cfg, invs);
+    var st = document.createElement("style");
+    st.id = "ks-page-style";
+    st.innerHTML = "@page { size: A4 landscape; margin: 10mm; }";
+    document.getElementsByTagName("head")[0].appendChild(st);
+    document.body.className = "print-ks";
+    window.print();
+    setTimeout(function () {
+      document.body.className = "";
+      var s2 = $("ks-page-style");
+      if (s2 && s2.parentNode) s2.parentNode.removeChild(s2);
+    }, 800);
+  }
+
+  /* ---------- Δικαιολογητικά ---------- */
+  function updateDocs() {
+    var box = $("doc-list");
+    var sel = $("doc-proc").value;
+    var lastC = K.getLast();
+    var net = (lastC && lastC.inp) ? lastC.inp.net : 0;
+    var gross = (lastC && lastC.r) ? lastC.r.gross : 0;
+    var scenario = (lastC && lastC.inp) ? lastC.inp.scenario : "none";
+    if (scenario === "sp") {
+      box.innerHTML = '<p class="hint">Για διατακτικές ιδίων πόρων μέσω ΣΠ ισχύουν οι διαδικασίες της διαχείρισης/ΣΠ — η λίστα δικαιολογητικών δημοσίων συμβάσεων δεν εφαρμόζεται.</p>';
+      return;
+    }
+    if (sel === "none") {
+      var sug = net > 30000 ? "διαγωνιστική διαδικασία" : (net > 2500 ? "απευθείας ανάθεση" : "σύμβαση ήσσονος αξίας");
+      box.innerHTML = '<p class="hint">' + (net > 0 ? "Με καθαρή αξία " + K.fmt(net) + " \u20ac συνήθως ακολουθείται: <b>" + sug + "</b>. " : "") + "Επίλεξε διαδικασία για να δεις τη λίστα (κατά ΤΕ 61-4, Κεφ. Β\u0384-Γ\u0384 και Παρ. \u00abΔ\u00bb/\u00abΖ\u00bb).</p>";
+      return;
+    }
+    var items = [];
+    function add(t, req, why) { items.push({ t: t, req: req, why: why || "" }); }
+
+    add("Απόφαση έγκρισης δέσμευσης πίστωσης (ΑΑΥ/ΣΑΕ κ.λπ.)", true);
+    add("Κατάσταση πληρωμής σε δύο αντίτυπα (Υπόδειγμα 3)", true);
+    add("Πρωτότυπο τιμολόγιο πώλησης / παροχής υπηρεσιών (στοιχεία κατά Παρ. \u00abΕ\u00bb)", true);
+    add("Δελτίο αποστολής — αν το τιμολόγιο δεν εκδόθηκε την ίδια ημέρα με τη διακίνηση", true);
+    add("Βεβαίωση παραλαβής (Υπόδειγμα 14) ή αποδεικτικό προσκόμισης υλικού", true);
+    add("ΑΔΔΥ σε τρία αντίγραφα ή υπηρεσιακή βεβαίωση μη χρέωσης (για υλικά)", true);
+
+    if (sel === "direct") {
+      add("Πρόσκληση υποβολής προσφορών — ανάρτηση ΚΗΜΔΗΣ τουλάχιστον 5 ημέρες πριν την ανάθεση (Υπόδειγμα 5)", true);
+      add("Απόφαση απευθείας ανάθεσης (Υπόδειγμα 6)", true);
+      add("Απόσπασμα ποινικού μητρώου — έως το όριο της απευθείας αρκεί Υπεύθυνη Δήλωση", true);
+      add("Φορολογική ενημερότητα (δικαιολογητικό ανάθεσης)", net > 2500, "όριο: καθαρή >2.500 \u20ac");
+      add("Ασφαλιστική ενημερότητα e-ΕΦΚΑ, κύριας & επικουρικής (δικαιολογητικό ανάθεσης)", net > 2500, "όριο: καθαρή >2.500 \u20ac");
+      add("Αποδεικτικά νόμιμης εκπροσώπησης για νομικά πρόσωπα (πιστοποιητικό ΓΕΜΗ)", true);
+    }
+    if (sel === "tender") {
+      add("Διακήρυξη / έγγραφα σύμβασης και αποδεικτικά δημοσιεύσεων (ΚΗΜΔΗΣ/ΕΣΗΔΗΣ)", true);
+      add("Αποφάσεις & πρακτικά επιτροπών (αποσφράγιση, αξιολόγηση, κατακύρωση)", true);
+      add("Πλήρη αποδεικτικά μη συνδρομής λόγων αποκλεισμού (ποινικό μητρώο, ενημερότητες, ΓΕΜΗ)", true);
+      add("Πρόσθετα αποδεικτικά δυνητικών λόγων αποκλεισμού (δικαστική φερεγγυότητα κ.λπ.)", net > 30000, "όριο: >30.000 \u20ac");
+      add("Υπογεγραμμένη σύμβαση και εγγυητική επιστολή καλής εκτέλεσης", true);
+    }
+
+    add("Φορολογική ενημερότητα εξόφλησης — αναζητείται και αυτεπάγγελτα (TAXISnet)", gross > 1500, "όριο: καταλογιστέο >1.500 \u20ac/τίτλο");
+    add("Ασφαλιστική ενημερότητα εξόφλησης (από φορέα κύριας ασφάλισης)", gross > 3000, "όριο: καταλογιστέο >3.000 \u20ac/τίτλο");
+    add("ΥΔ γνωστοποίησης τραπεζικού λογαριασμού (IBAN) δικαιούχου (Υπόδειγμα 15)", true);
+
+    var html = '<ul class="docs">';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      html += '<li class="' + (it.req ? "" : "no") + '">' + esc(it.t) +
+              (it.req
+                ? (it.why ? " <small>(" + esc(it.why) + ")</small>" : "")
+                : " <small>— δεν απαιτείται εδώ" + (it.why ? " (" + esc(it.why) + ")" : "") + "</small>") +
+              "</li>";
+    }
+    html += "</ul>";
+    box.innerHTML = html;
+  }
+
+  /* ---------- Εκκίνηση ---------- */
+  addInvRow();
+  on($("ks-toggle"), "click", function () {
+    var b = $("ks-body");
+    b.className = (b.className === "open") ? "" : "open";
+  });
+  on($("ks-add"), "click", addInvRow);
+  on($("btn-ks-print"), "click", printKS);
+  on($("doc-proc"), "change", updateDocs);
+  window.__kratHook = function () { updateDocs(); updatePreview(); };
+  updateDocs();
+  updatePreview();
+})();
+</script>
+
+</body>
+</html>
