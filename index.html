@@ -290,22 +290,6 @@ footer.note {
   max-width:980px; margin:6px auto 0; padding:0 16px;
   font-size:12px; color:#8B8C89;
 }
-.mobile-help {
-  max-width:980px; margin:16px auto 0; padding:0 16px;
-}
-.mobile-help > summary {
-  cursor:pointer; font-size:14px; font-weight:600; color:#1F2123;
-  padding:12px 14px; background:#FFFFFF; border:1px solid #E0E0DC;
-  border-radius:10px; list-style:none;
-}
-.mobile-help > summary::-webkit-details-marker { display:none; }
-.mobile-help > summary::before { content:"\25B8  "; color:#6E7075; }
-.mobile-help[open] > summary::before { content:"\25BE  "; }
-.mobile-help .mh-body {
-  background:#FFFFFF; border:1px solid #E0E0DC; border-top:none;
-  border-radius:0 0 10px 10px; padding:4px 16px 14px;
-}
-.mobile-help .mh-body p { font-size:13.5px; color:#3B3E32; margin-top:10px; }
 
 /* ============ ΚΑΤΑΣΤΑΣΗ ΠΛΗΡΩΜΗΣ & ΔΙΚΑΙΟΛΟΓΗΤΙΚΑ ============ */
 #ks-body { display:none; margin-top:8px; }
@@ -343,7 +327,7 @@ textarea.txtin { resize:vertical; }
 /* ============ ΕΚΤΥΠΩΣΗ ============ */
 @media print {
   body { background:#fff; padding:0; }
-  header.app, .col-form, .actions, footer.note, #copied, .mobile-help { display:none !important; }
+  header.app, .col-form, .actions, footer.note, #copied { display:none !important; }
   .wrap { padding:0; max-width:none; }
   .col-receipt { width:auto; }
   .receipt { border:1px solid #999; border-radius:0; }
@@ -567,16 +551,6 @@ textarea.txtin { resize:vertical; }
 
   </div>
 </div>
-
-<details class="mobile-help">
-  <summary>Χρήση &amp; εγκατάσταση στο κινητό</summary>
-  <div class="mh-body">
-    <p><b>Αν «κολλάει» μόλις πληκτρολογείς στο iPhone:</b> το άνοιξες μέσα από την εφαρμογή «Αρχεία». Εκεί το iOS δείχνει απλή προεπισκόπηση που δεν εκτελεί σωστά τα πεδία. Δεν φταίει το αρχείο ούτε το δίκτυο. Χρειάζεται να ανοίξει από διεύθυνση ιστού.</p>
-    <p><b>Γιατί δεν εμφανίζεται το Safari στην «Κοινή χρήση»:</b> το iOS δεν προσφέρει «άνοιγμα τοπικού αρχείου στο Safari». Ένα αρχείο που βρίσκεται μόνο στο κινητό δεν μπορεί να γίνει εφαρμογή — είναι περιορισμός της Apple.</p>
-    <p><b>Για εικονίδιο στην αρχική οθόνη (ανοίγει σαν εφαρμογή, χωρίς μπάρα, και εκτός δικτύου):</b> <a href="https://mardarts.github.io/kratiseis/" target="_blank">https://mardarts.github.io/kratiseis/</a>. Έτσι αποκτάς εικονίδιο «Κρατήσεις» και ανοίγει σαν κανονική εφαρμογή.</p>
-    <p><b>Στους υπηρεσιακούς υπολογιστές (offline):</b> δεν χρειάζεται τίποτα — άνοιξε το αρχείο με διπλό κλικ· δουλεύει τοπικά.</p>
-  </div>
-</details>
 
 <footer class="note">
   <p>Κατά ΤΕ 61-4/2022 (με Τ1, ισχύς 5 Ιουν 26): ΦΕ 1% καύσιμα/καπνικά, 4% λοιπά αγαθά, 8% υπηρεσίες, 20% συμβουλευτικές, 3% τεχνικά έργα — υπολογιζόμενος επί καθαρής αξίας μετά την αφαίρεση κρατήσεων (Παράρτημα «Η»)· απαλλαγή &le;150&euro; χωρίς σύμβαση (αγαθά/υπηρεσίες) και &le;300&euro; (συμβουλευτικές/έργα, φορολογικοί κάτοικοι Ελλάδας) &middot; Ε.Α.ΔΗ.ΣΥ. 0,1% για καθαρή &gt;1.000&euro; &middot; Κράτηση ν.5223/25 άρθ.37: 6% &middot; Οι κρατήσεις στρογγυλοποιούνται ανά γραμμή στο λεπτό. Τα αποτελέσματα είναι βοηθητικά — ισχύουν οι κείμενες διατάξεις.</p>
