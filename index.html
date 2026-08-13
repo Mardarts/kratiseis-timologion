@@ -290,6 +290,8 @@ footer.note {
   max-width:980px; margin:6px auto 0; padding:0 16px;
   font-size:12px; color:#8B8C89;
 }
+.ks-section { padding-top:0; }
+.ks-section .card { margin-bottom:16px; }
 
 /* ============ ΚΑΤΑΣΤΑΣΗ ΠΛΗΡΩΜΗΣ & ΔΙΚΑΙΟΛΟΓΗΤΙΚΑ ============ */
 #ks-body { display:none; margin-top:8px; }
@@ -312,7 +314,27 @@ textarea.txtin { resize:vertical; }
 .docs li small { color:#6E7075; }
 
 /* Εκτυπώσιμη Κατάσταση Πληρωμής */
+#ks-overlay { display:none; }
+#ks-overlay.show {
+  display:block; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:#FFFFFF; z-index:1000; overflow:auto;
+  padding:12px 14px calc(20px + env(safe-area-inset-bottom));
+  padding-top:calc(12px + env(safe-area-inset-top));
+}
+#ks-overlay .ks-toolbar {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  position:-webkit-sticky; position:sticky; top:0;
+  background:#FFFFFF; padding-bottom:10px; margin-bottom:6px; gap:10px;
+}
+#ks-overlay .ks-toolbar button {
+  -webkit-flex:1 1 0; flex:1 1 0; font-family:inherit;
+  font-size:15px; font-weight:600; padding:12px 8px; border-radius:8px;
+  border:1.5px solid #1F2123; cursor:pointer;
+}
+#ks-overlay .ks-toolbar .primary { background:#1F2123; color:#F5F5F4; margin-right:0; }
+#ks-overlay .ks-toolbar .ghost { background:transparent; color:#1F2123; }
 #ks-print { display:none; color:#000; font-size:12.5px; }
+#ks-overlay.show #ks-print { display:block; }
 #ks-print .ks-head { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-justify-content:space-between; justify-content:space-between; }
 #ks-print .ks-unit { text-align:left; font-weight:600; }
 #ks-print .ks-title { text-align:center; font-weight:700; font-size:15px; text-decoration:underline; margin:6px 0 10px; }
@@ -331,10 +353,11 @@ textarea.txtin { resize:vertical; }
   .wrap { padding:0; max-width:none; }
   .col-receipt { width:auto; }
   .receipt { border:1px solid #999; border-radius:0; }
-}
-@media print {
-  body.print-ks header.app, body.print-ks .wrap, body.print-ks footer.note { display:none !important; }
-  body.print-ks #ks-print { display:block !important; }
+  /* Όταn είναι ανοιχτή η Κατάσταση Πληρωμής, τυπώνεται μόνο αυτή */
+  body.ks-open header.app, body.ks-open .wrap, body.ks-open footer.note { display:none !important; }
+  body.ks-open #ks-overlay { position:static; padding:0; background:#fff; overflow:visible; }
+  body.ks-open #ks-overlay .ks-toolbar { display:none !important; }
+  body.ks-open #ks-print { display:block !important; }
 }
 </style>
 </head>
@@ -468,34 +491,6 @@ textarea.txtin { resize:vertical; }
       </div>
 
       <div class="card">
-        <h2>Κατάσταση Πληρωμής (Υπόδειγμα «3»)</h2>
-        <p class="hint">Πολλά τιμολόγια ίδιου δικαιούχου — οι κρατήσεις, ο ΦΕ και ο ΦΠΑ εφαρμόζονται σε κάθε τιμολόγιο από τις τρέχουσες ρυθμίσεις.</p>
-        <button type="button" class="linkbtn" id="ks-toggle">Συμπλήρωση στοιχείων &amp; τιμολογίων</button>
-        <div id="ks-body">
-          <div class="kfield"><label class="klbl" for="ks-unit">Σχηματισμός / Μονάδα / Διεύθυνση (μία γραμμή ανά σειρά)</label><textarea class="txtin" id="ks-unit" rows="3"></textarea></div>
-          <div class="kfield"><label class="klbl" for="ks-tel">Τηλέφωνο</label><input class="txtin" type="text" id="ks-tel"></div>
-          <div class="kfield"><label class="klbl" for="ks-topos">Τόπος</label><input class="txtin" type="text" id="ks-topos"></div>
-          <div class="kfield"><label class="klbl" for="ks-ef">Ειδικός Φορέας</label><input class="txtin" type="text" id="ks-ef" placeholder="π.χ. 1011-202-0000000 (ΓΕΣ)"></div>
-          <div class="kfield"><label class="klbl" for="ks-ale">ΑΛΕ</label><input class="txtin" type="text" id="ks-ale"></div>
-          <div class="kfield"><label class="klbl" for="ks-ben">Δικαιούχος (επωνυμία)</label><input class="txtin" type="text" id="ks-ben"></div>
-          <div class="kfield"><label class="klbl" for="ks-ben-addr">Διεύθυνση δικαιούχου</label><input class="txtin" type="text" id="ks-ben-addr"></div>
-          <div class="kfield"><label class="klbl" for="ks-afm">ΑΦΜ</label><input class="txtin" type="text" id="ks-afm" inputmode="numeric"></div>
-          <div class="kfield"><label class="klbl" for="ks-iban">IBAN</label><input class="txtin" type="text" id="ks-iban"></div>
-          <div class="kfield"><label class="klbl" for="ks-logo">Αιτιολογία δαπάνης (ΛΟΓΩ)</label><input class="txtin" type="text" id="ks-logo"></div>
-          <div class="kfield"><label class="klbl">Τιμολόγια (αριθμός παραστατικού &amp; καθαρή αξία)</label>
-            <div id="ks-invs"></div>
-            <button type="button" class="linkbtn" id="ks-add">+ Προσθήκη τιμολογίου</button>
-          </div>
-          <p class="hint" id="ks-prev"></p>
-          <div class="actions" style="margin-top:6px">
-            <button type="button" class="primary" id="btn-ks-print">Εκτύπωση Κατάστασης</button>
-          </div>
-          <p class="hint">Στο παράθυρο εκτύπωσης επίλεξε οριζόντιο προσανατολισμό (ρυθμίζεται και αυτόματα όπου υποστηρίζεται).</p>
-          <p class="hint alert" id="ks-warn"></p>
-        </div>
-      </div>
-
-      <div class="card">
         <h2>Δικαιολογητικά</h2>
         <div class="field">
           <label class="lbl" for="doc-proc">Διαδικασία ανάθεσης</label>
@@ -552,11 +547,47 @@ textarea.txtin { resize:vertical; }
   </div>
 </div>
 
+<div class="wrap ks-section">
+  <div class="card">
+    <h2>Κατάσταση Πληρωμής (Υπόδειγμα «3»)</h2>
+    <p class="hint">Τελευταίο βήμα, αφού δεις τους αριθμούς του τιμολογίου παραπάνω. Πολλά τιμολόγια ίδιου δικαιούχου — οι κρατήσεις, ο ΦΕ και ο ΦΠΑ εφαρμόζονται σε κάθε τιμολόγιο από τις τρέχουσες ρυθμίσεις/σενάριο.</p>
+    <button type="button" class="linkbtn" id="ks-toggle">Συμπλήρωση στοιχείων &amp; τιμολογίων</button>
+    <div id="ks-body">
+      <div class="kfield"><label class="klbl" for="ks-unit">Σχηματισμός / Μονάδα / Διεύθυνση (μία γραμμή ανά σειρά)</label><textarea class="txtin" id="ks-unit" rows="3"></textarea></div>
+      <div class="kfield"><label class="klbl" for="ks-tel">Τηλέφωνο</label><input class="txtin" type="text" id="ks-tel"></div>
+      <div class="kfield"><label class="klbl" for="ks-topos">Τόπος</label><input class="txtin" type="text" id="ks-topos"></div>
+      <div class="kfield"><label class="klbl" for="ks-ef">Ειδικός Φορέας</label><input class="txtin" type="text" id="ks-ef" placeholder="π.χ. 1011-202-0000000 (ΓΕΣ)"></div>
+      <div class="kfield"><label class="klbl" for="ks-ale">ΑΛΕ</label><input class="txtin" type="text" id="ks-ale"></div>
+      <div class="kfield"><label class="klbl" for="ks-ben">Δικαιούχος (επωνυμία)</label><input class="txtin" type="text" id="ks-ben"></div>
+      <div class="kfield"><label class="klbl" for="ks-ben-addr">Διεύθυνση δικαιούχου</label><input class="txtin" type="text" id="ks-ben-addr"></div>
+      <div class="kfield"><label class="klbl" for="ks-afm">ΑΦΜ</label><input class="txtin" type="text" id="ks-afm" inputmode="numeric"></div>
+      <div class="kfield"><label class="klbl" for="ks-iban">IBAN</label><input class="txtin" type="text" id="ks-iban"></div>
+      <div class="kfield"><label class="klbl" for="ks-logo">Αιτιολογία δαπάνης (ΛΟΓΩ)</label><input class="txtin" type="text" id="ks-logo"></div>
+      <div class="kfield"><label class="klbl">Τιμολόγια (αριθμός παραστατικού &amp; καθαρή αξία)</label>
+        <div id="ks-invs"></div>
+        <button type="button" class="linkbtn" id="ks-add">+ Προσθήκη τιμολογίου</button>
+      </div>
+      <p class="hint" id="ks-prev"></p>
+      <div class="actions" style="margin-top:6px">
+        <button type="button" class="primary" id="btn-ks-print">Προβολή Κατάστασης Πληρωμής</button>
+      </div>
+      <p class="hint">Στο παράθυρο εκτύπωσης επίλεξε οριζόντιο προσανατολισμό (ρυθμίζεται και αυτόματα όπου υποστηρίζεται).</p>
+      <p class="hint alert" id="ks-warn"></p>
+    </div>
+  </div>
+</div>
+
 <footer class="note">
   <p>Κατά ΤΕ 61-4/2022 (με Τ1, ισχύς 5 Ιουν 26): ΦΕ 1% καύσιμα/καπνικά, 4% λοιπά αγαθά, 8% υπηρεσίες, 20% συμβουλευτικές, 3% τεχνικά έργα — υπολογιζόμενος επί καθαρής αξίας μετά την αφαίρεση κρατήσεων (Παράρτημα «Η»)· απαλλαγή &le;150&euro; χωρίς σύμβαση (αγαθά/υπηρεσίες) και &le;300&euro; (συμβουλευτικές/έργα, φορολογικοί κάτοικοι Ελλάδας) &middot; Ε.Α.ΔΗ.ΣΥ. 0,1% για καθαρή &gt;1.000&euro; &middot; Κράτηση ν.5223/25 άρθ.37: 6% &middot; Οι κρατήσεις στρογγυλοποιούνται ανά γραμμή στο λεπτό. Τα αποτελέσματα είναι βοηθητικά — ισχύουν οι κείμενες διατάξεις.</p>
 </footer>
 
-<div id="ks-print"></div>
+<div id="ks-overlay">
+  <div class="ks-toolbar">
+    <button type="button" class="primary" id="btn-ks-do-print">Εκτύπωση / Αποθήκευση PDF</button>
+    <button type="button" class="ghost" id="btn-ks-close">Κλείσιμο</button>
+  </div>
+  <div id="ks-print"></div>
+</div>
 
 <script>
 (function () {
@@ -1155,13 +1186,14 @@ textarea.txtin { resize:vertical; }
       var r = K.compute(inp);
       var lines = dedLines(inp, r);
       var other = K.round2(r.ded - r.fe);
-      per.push({ num: invs[i].num, inp: inp, r: r, lines: lines, other: other });
+      var netAfter = r.sp ? inp.net : r.feBase;
+      per.push({ num: invs[i].num, inp: inp, r: r, lines: lines, other: other, netAfter: netAfter });
       totalLines += lines.length;
       sums.net = K.round2(sums.net + inp.net);
       sums.vat = K.round2(sums.vat + r.vat);
       sums.gross = K.round2(sums.gross + r.gross);
       sums.other = K.round2(sums.other + other);
-      sums.base = K.round2(sums.base + r.feBase);
+      sums.base = K.round2(sums.base + netAfter);
       sums.fe = K.round2(sums.fe + r.fe);
       sums.pay = K.round2(sums.pay + r.pay);
     }
@@ -1194,7 +1226,7 @@ textarea.txtin { resize:vertical; }
         rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.other) + "\u20ac" : "") + "</td>";
         rowsHtml += '<td class="num">' + (lastL ? "-" : "") + "</td>";
         rowsHtml += '<td class="num">' + (lastL ? "-" : "") + "</td>";
-        rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.r.feBase) + "\u20ac" : "") + "</td>";
+        rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.netAfter) + "\u20ac" : "") + "</td>";
         rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.r.fe) + "\u20ac" : "") + "</td>";
         rowsHtml += '<td class="num">' + (lastL ? K.fmt(p.r.pay) + "\u20ac" : "") + "</td>";
         rowsHtml += "</tr>";
@@ -1229,10 +1261,6 @@ textarea.txtin { resize:vertical; }
     var cfg = K.readConfig();
     var invs = readInvoices();
     if (!invs.length) { el.innerHTML = ""; return; }
-    if (cfg.scenario === "sp") {
-      el.innerHTML = "Η Κατάσταση Πληρωμής αφορά τη ροή δημοσίων συμβάσεων — άλλαξε σενάριο δαπάνης.";
-      return;
-    }
     var pay = 0, gross = 0, i, k;
     for (i = 0; i < invs.length; i++) {
       var inp = {};
@@ -1246,31 +1274,40 @@ textarea.txtin { resize:vertical; }
       " — Γενικό σύνολο: <b>" + K.fmt(gross) + " \u20ac</b> \u00b7 Καθαρό πληρωτέο: <b>" + K.fmt(pay) + " \u20ac</b>";
   }
 
-  function printKS() {
+  function openKS() {
     var warn = $("ks-warn");
     warn.innerHTML = "";
     var cfg = K.readConfig();
-    if (cfg.scenario === "sp") {
-      warn.innerHTML = "Η Κατάσταση Πληρωμής αφορά δαπάνες δημοσίων συμβάσεων — άλλαξε το σενάριο δαπάνης.";
-      return;
-    }
     var invs = readInvoices();
     if (!invs.length) {
       warn.innerHTML = "Πρόσθεσε τουλάχιστον ένα τιμολόγιο με καθαρή αξία.";
       return;
     }
     $("ks-print").innerHTML = buildKsHTML(cfg, invs);
+    document.body.className = "ks-open";
+    $("ks-overlay").className = "show";
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+
+  function closeKS() {
+    $("ks-overlay").className = "";
+    document.body.className = "";
+    var s = $("ks-page-style");
+    if (s && s.parentNode) s.parentNode.removeChild(s);
+  }
+
+  function doPrintKS() {
     var st = document.createElement("style");
     st.id = "ks-page-style";
     st.innerHTML = "@page { size: A4 landscape; margin: 10mm; }";
     document.getElementsByTagName("head")[0].appendChild(st);
-    document.body.className = "print-ks";
-    window.print();
+    try {
+      window.print();
+    } catch (e) {}
     setTimeout(function () {
-      document.body.className = "";
       var s2 = $("ks-page-style");
       if (s2 && s2.parentNode) s2.parentNode.removeChild(s2);
-    }, 800);
+    }, 1500);
   }
 
   /* ---------- Δικαιολογητικά ---------- */
@@ -1340,7 +1377,9 @@ textarea.txtin { resize:vertical; }
     b.className = (b.className === "open") ? "" : "open";
   });
   on($("ks-add"), "click", addInvRow);
-  on($("btn-ks-print"), "click", printKS);
+  on($("btn-ks-print"), "click", openKS);
+  on($("btn-ks-do-print"), "click", doPrintKS);
+  on($("btn-ks-close"), "click", closeKS);
   on($("doc-proc"), "change", updateDocs);
   window.__kratHook = function () { updateDocs(); updatePreview(); };
   updateDocs();
