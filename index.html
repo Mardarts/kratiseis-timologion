@@ -36,7 +36,10 @@ body {
 header.app {
   background:#1F2123;
   color:#F5F5F4;
-  padding:18px 20px 16px;
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  -webkit-align-items:center; align-items:center;
+  -webkit-justify-content:space-between; justify-content:space-between;
+  padding:18px 16px 16px;
   padding-top:calc(18px + constant(safe-area-inset-top));
   padding-top:calc(18px + env(safe-area-inset-top));
 }
@@ -346,6 +349,99 @@ textarea.txtin { resize:vertical; }
 #ks-print td.ben { font-size:10px; }
 #ks-print .ks-sign { margin-top:26px; text-align:right; padding-right:40px; font-weight:600; }
 
+header.app .h-txt { min-width:0; }
+#btn-tv {
+  -webkit-flex:0 0 auto; flex:0 0 auto;
+  font-family:inherit; font-size:12.5px; font-weight:600; line-height:1.25;
+  color:#F5F5F4; background:transparent;
+  border:1.5px solid #6E7075; border-radius:8px;
+  padding:8px 11px; margin-left:12px; cursor:pointer; white-space:nowrap;
+}
+#btn-tv:focus { outline:3px solid #8A909A; outline-offset:2px; }
+
+/* ============ ΥΠΟΛΟΓΙΣΜΟΣ ΤΙΜΩΝ ============ */
+#tv-overlay { display:none; }
+#tv-overlay.show {
+  display:block; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:#F5F5F4; z-index:1000; overflow:auto;
+  padding:12px 14px calc(24px + env(safe-area-inset-bottom));
+  padding-top:calc(12px + env(safe-area-inset-top));
+}
+#tv-overlay .tv-toolbar {
+  display:-webkit-box; display:-webkit-flex; display:flex;
+  position:-webkit-sticky; position:sticky; top:0;
+  background:#F5F5F4; padding-bottom:10px; margin-bottom:8px;
+}
+#tv-overlay .tv-toolbar button {
+  -webkit-flex:1 1 0; flex:1 1 0; font-family:inherit;
+  font-size:15px; font-weight:600; padding:12px 8px; border-radius:8px;
+  border:1.5px solid #1F2123; cursor:pointer;
+}
+#tv-overlay .tv-toolbar .primary { background:#1F2123; color:#F5F5F4; margin-right:10px; }
+#tv-overlay .tv-toolbar .ghost { background:transparent; color:#1F2123; }
+.tv-inner { max-width:980px; margin:0 auto; }
+.tv-inner .card { background:#FFF; border:1px solid #E0E0DC; border-radius:10px; padding:16px 14px; margin-bottom:14px; }
+.tv-h { font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#6E7075; font-weight:700; margin-bottom:12px; }
+.tv-meta3 { display:-webkit-box; display:-webkit-flex; display:flex; }
+.tv-meta3 .kfield { -webkit-flex:1 1 0; flex:1 1 0; margin-right:8px; }
+.tv-meta3 .kfield:last-child { margin-right:0; }
+
+.tv-head { display:none; }
+.tv-row {
+  display:grid;
+  grid-template-columns: 20px 1fr 1fr 1fr 28px;
+  grid-gap:5px; gap:5px;
+  -webkit-align-items:center; align-items:center;
+  padding-bottom:9px; margin-bottom:9px; border-bottom:1px solid #EFEFEC;
+}
+.tv-row .tv-no { grid-column:1; grid-row:1; font-size:12.5px; color:#8B8C89; text-align:center; }
+.tv-row .tv-name { grid-column:2 / 5; grid-row:1; }
+.tv-row .tv-del  { grid-column:5; grid-row:1; justify-self:end; }
+.tv-row .tv-qty  { grid-column:2; grid-row:2; }
+.tv-row .tv-price{ grid-column:3; grid-row:2; }
+.tv-row .tv-total{ grid-column:4; grid-row:2; }
+.tv-row input {
+  width:100%; padding:9px 6px; font-size:13.5px; font-family:inherit;
+  border:1px solid #C9C9C4; border-radius:6px; background:#FCFCFB; color:#1B1C1E;
+}
+.tv-row input.mono { text-align:right; font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+.tv-row input.tv-total { background:#F0F0EE; font-weight:600; }
+.tv-row input:focus { outline:3px solid #8A909A; outline-offset:1px; }
+.tv-row .tv-del {
+  background:none; border:none; color:#8B8C89; font-size:17px;
+  cursor:pointer; padding:4px; font-family:inherit;
+}
+@media (min-width: 720px) {
+  .tv-head {
+    display:grid; grid-template-columns: 26px 2.6fr 0.9fr 1.1fr 1.2fr 28px;
+    grid-gap:6px; gap:6px; margin-bottom:6px;
+    font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#6E7075; font-weight:700;
+  }
+  .tv-head span:nth-child(n+3) { text-align:right; }
+  .tv-row { grid-template-columns: 26px 2.6fr 0.9fr 1.1fr 1.2fr 28px; }
+  .tv-row > * { grid-row:1 !important; }
+  .tv-row .tv-no { grid-column:1 !important; }
+  .tv-row .tv-name { grid-column:2 !important; }
+  .tv-row .tv-qty { grid-column:3 !important; }
+  .tv-row .tv-price { grid-column:4 !important; }
+  .tv-row .tv-total { grid-column:5 !important; }
+  .tv-row .tv-del { grid-column:6 !important; }
+}
+
+/* Εκτυπώσιμη Έκθεση Απαιτούμενης Δαπάνης */
+#tv-print { display:none; color:#000; font-size:12.5px; }
+#tv-print .tvp-meta { text-align:right; font-size:11px; margin-bottom:8px; line-height:1.5; }
+#tv-print .tvp-title { text-align:center; font-weight:700; font-size:14px; text-decoration:underline; margin:4px 0 12px; line-height:1.5; }
+#tv-print table { width:100%; border-collapse:collapse; font-size:11px; }
+#tv-print th, #tv-print td { border:1px solid #555; padding:4px 5px; }
+#tv-print th { font-size:10px; text-align:center; background:#F2F2F0; }
+#tv-print td.num { text-align:right; white-space:nowrap; }
+#tv-print td.mid { text-align:center; }
+#tv-print td.lbl { text-align:right; font-weight:700; border:none; }
+#tv-print .tvp-place { text-align:right; margin-top:10px; font-size:11.5px; text-decoration:underline; }
+#tv-print .tvp-sign { display:-webkit-box; display:-webkit-flex; display:flex; margin-top:30px; text-align:center; font-size:11.5px; }
+#tv-print .tvp-sign div { -webkit-flex:1 1 0; flex:1 1 0; line-height:1.6; }
+
 /* ============ ΕΚΤΥΠΩΣΗ ============ */
 @media print {
   body { background:#fff; padding:0; }
@@ -358,14 +454,22 @@ textarea.txtin { resize:vertical; }
   body.ks-open #ks-overlay { position:static; padding:0; background:#fff; overflow:visible; }
   body.ks-open #ks-overlay .ks-toolbar { display:none !important; }
   body.ks-open #ks-print { display:block !important; }
+  /* Όταν είναι ανοιχτός ο Υπολογισμός Τιμών, τυπώνεται μόνο η Έκθεση */
+  body.tv-open header.app, body.tv-open .wrap, body.tv-open footer.note { display:none !important; }
+  body.tv-open #tv-overlay { position:static; padding:0; background:#fff; overflow:visible; }
+  body.tv-open .tv-toolbar, body.tv-open .tv-inner { display:none !important; }
+  body.tv-open #tv-print { display:block !important; }
 }
 </style>
 </head>
 <body>
 
 <header class="app">
-  <div class="eyebrow">Ελληνικός Στρατός &middot; Δαπάνες</div>
-  <h1>Υπολογισμός Κρατήσεων Τιμολογίου</h1>
+  <div class="h-txt">
+    <div class="eyebrow">Ελληνικός Στρατός &middot; Δαπάνες</div>
+    <h1>Υπολογισμός Κρατήσεων Τιμολογίου</h1>
+  </div>
+  <button type="button" id="btn-tv">Υπολογισμός<br>Τιμών</button>
 </header>
 
 <div class="wrap">
@@ -580,6 +684,59 @@ textarea.txtin { resize:vertical; }
 <footer class="note">
   <p>Κατά ΤΕ 61-4/2022 (με Τ1, ισχύς 5 Ιουν 26): ΦΕ 1% καύσιμα/καπνικά, 4% λοιπά αγαθά, 8% υπηρεσίες, 20% συμβουλευτικές, 3% τεχνικά έργα — υπολογιζόμενος επί καθαρής αξίας μετά την αφαίρεση κρατήσεων (Παράρτημα «Η»)· απαλλαγή &le;150&euro; χωρίς σύμβαση (αγαθά/υπηρεσίες) και &le;300&euro; (συμβουλευτικές/έργα, φορολογικοί κάτοικοι Ελλάδας) &middot; Ε.Α.ΔΗ.ΣΥ. 0,1% για καθαρή &gt;1.000&euro; &middot; Κράτηση ν.5223/25 άρθ.37: 6% &middot; Οι κρατήσεις στρογγυλοποιούνται ανά γραμμή στο λεπτό. Τα αποτελέσματα είναι βοηθητικά — ισχύουν οι κείμενες διατάξεις.</p>
 </footer>
+
+<div id="tv-overlay">
+  <div class="tv-toolbar">
+    <button type="button" class="primary" id="btn-tv-print">Εκτύπωση / PDF</button>
+    <button type="button" class="ghost" id="btn-tv-close">Κλείσιμο</button>
+  </div>
+
+  <div class="tv-inner">
+
+    <div class="card">
+      <h2 class="tv-h">Έκθεση Απαιτούμενης Δαπάνης</h2>
+      <div class="kfield"><label class="klbl" for="tv-title">Για την προμήθεια</label><input class="txtin" type="text" id="tv-title" placeholder="π.χ. ηλεκτρολογικού εξοπλισμού"></div>
+      <div class="tv-meta3">
+        <div class="kfield"><label class="klbl" for="tv-xrisi">Χρήση</label><input class="txtin" type="text" id="tv-xrisi" placeholder="2026"></div>
+        <div class="kfield"><label class="klbl" for="tv-foreas">Φορέας</label><input class="txtin" type="text" id="tv-foreas"></div>
+        <div class="kfield"><label class="klbl" for="tv-ale">ΑΛΕ</label><input class="txtin" type="text" id="tv-ale"></div>
+      </div>
+      <div class="kfield"><label class="klbl" for="tv-place">Τόπος &amp; ημερομηνία</label><input class="txtin" type="text" id="tv-place" placeholder="π.χ. Σαμοθράκη, 21 Αυγ 26"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="tv-h">Στόχος ποσού (προαιρετικό)</h2>
+      <div class="kfield"><label class="klbl" for="tv-goal">Καταλογιστέο που θέλω να βγει (&euro;)</label><input class="txtin mono" type="text" id="tv-goal" inputmode="decimal" placeholder="π.χ. 1.577,26"></div>
+      <div class="actions" style="margin-top:8px">
+        <button type="button" class="primary" id="btn-tv-suggest">Πρόταση τιμών</button>
+      </div>
+      <p class="hint" id="tv-goal-note">Συμπλήρωσε ποσότητες και πάτησε «Πρόταση τιμών»: θα προταθούν τιμές μονάδος (πάντα με 2 δεκαδικά) ώστε το σύνολο να βγει ακριβώς στον στόχο. Όσες σειρές έχουν ήδη τιμή διατηρούνται. Αν χρειαστεί, προσαρμόζεται ελάχιστα μία ποσότητα.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="tv-h">Υλικά</h2>
+      <div class="tv-head">
+        <span>Α/Α</span><span>Είδος</span><span>Ποσότητα</span><span>Τιμή μονάδος</span><span>Συνολική τιμή</span><span></span>
+      </div>
+      <div id="tv-rows"></div>
+      <button type="button" class="linkbtn" id="tv-add">+ Προσθήκη υλικού</button>
+      <p class="hint">Συμπλήρωσε <b>ποσότητα</b> και <b>τιμή μονάδος</b> για να βγει η συνολική τιμή — ή γράψε κατευθείαν τη <b>συνολική τιμή</b> και θα υπολογιστεί η τιμή μονάδος. Οι συνολικές τιμές στρογγυλοποιούνται προς τα πάνω στο λεπτό.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="tv-h">Σύνολα</h2>
+      <div class="rrow"><span class="k">Καθαρή αξία</span><span class="v mono" id="tv-net">0,00 &euro;</span></div>
+      <div class="rrow"><span class="k">ΦΠΑ <small id="tv-vatpct">24%</small></span><span class="v mono" id="tv-vat">0,00 &euro;</span></div>
+      <div class="rrow payable"><span class="k">Καταλογιστέο</span><span class="v mono" id="tv-kat">0,00 &euro;</span></div>
+      <p class="hint" id="tv-diff"></p>
+      <div class="actions" style="margin-top:12px">
+        <button type="button" class="primary" id="btn-tv-use">Χρήση καθαρής αξίας στον υπολογισμό κρατήσεων</button>
+      </div>
+    </div>
+
+  </div>
+  <div id="tv-print"></div>
+</div>
 
 <div id="ks-overlay">
   <div class="ks-toolbar">
@@ -1387,5 +1544,398 @@ textarea.txtin { resize:vertical; }
 })();
 </script>
 
+<script>
+/* ---------- Υπολογισμός Τιμών (Έκθεση Απαιτούμενης Δαπάνης) ---------- */
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  var K = window.KRAT;
+  var START_ROWS = 10;
+  var busy = false;
+
+  function on(el, ev, fn) {
+    if (!el) return;
+    if (el.addEventListener) el.addEventListener(ev, fn, false);
+    else el.attachEvent("on" + ev, fn);
+  }
+  function fire(el, type) {
+    var e;
+    if (typeof window.Event === "function") { e = new window.Event(type, { bubbles: true }); }
+    else { e = document.createEvent("Event"); e.initEvent(type, true, true); }
+    el.dispatchEvent(e);
+  }
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function num(v) { var n = K.parseAmount(v); return isFinite(n) && n > 0 ? n : 0; }
+
+  /* Όλες οι τιμές πάντα με 2 δεκαδικά */
+  function fmtPrice(n) { return K.fmt(n); }
+  /* Συνολική τιμή: στρογγυλοποίηση ΠΡΟΣ ΤΑ ΠΑΝΩ στο λεπτό (π.χ. 21,343 → 21,35) */
+  function ceil2(x) { return Math.ceil(x * 100 - 1e-9) / 100; }
+  function cents(x) { return Math.round(x * 100); }
+  function isInt(x) { return Math.abs(x - Math.round(x)) < 1e-9; }
+
+  /* ---------- Σειρές ---------- */
+  function rowEls(r) {
+    return {
+      name:  r.getElementsByClassName("tv-name")[0],
+      qty:   r.getElementsByClassName("tv-qty")[0],
+      price: r.getElementsByClassName("tv-price")[0],
+      total: r.getElementsByClassName("tv-total")[0]
+    };
+  }
+  function allRows() {
+    var out = [], rs = $("tv-rows").getElementsByClassName("tv-row");
+    for (var i = 0; i < rs.length; i++) out.push(rs[i]);
+    return out;
+  }
+
+  function addRow(focus) {
+    var d = document.createElement("div");
+    d.className = "tv-row";
+    d.innerHTML =
+      '<span class="tv-no"></span>' +
+      '<input class="tv-name" type="text" placeholder="Είδος">' +
+      '<input class="tv-qty mono" type="text" inputmode="decimal" placeholder="Ποσ.">' +
+      '<input class="tv-price mono" type="text" inputmode="decimal" placeholder="Τιμή μον.">' +
+      '<input class="tv-total mono" type="text" inputmode="decimal" placeholder="Σύνολο">' +
+      '<button type="button" class="tv-del" title="Διαγραφή σειράς">\u2715</button>';
+    $("tv-rows").appendChild(d);
+
+    var e = rowEls(d);
+    on(e.qty, "input", function () { fromQtyPrice(d); });
+    on(e.price, "input", function () { fromQtyPrice(d); });
+    on(e.total, "input", function () { fromTotal(d); });
+    on(e.total, "change", function () { normalizeRow(d); });
+    on(e.qty, "change", function () { normalizeRow(d); });
+    on(e.name, "input", recalc);
+    on(d.getElementsByClassName("tv-del")[0], "click", function () {
+      if (allRows().length <= 1) { var z = rowEls(d); z.name.value = z.qty.value = z.price.value = z.total.value = ""; }
+      else { d.parentNode.removeChild(d); }
+      recalc();
+    });
+    if (focus) e.name.focus();
+    return d;
+  }
+
+  /* Ποσότητα ή τιμή μονάδος → συνολική τιμή */
+  function fromQtyPrice(r) {
+    if (busy) return;
+    var e = rowEls(r), q = num(e.qty.value), p = num(e.price.value);
+    busy = true;
+    if (q > 0 && p > 0) e.total.value = K.fmt(ceil2(q * p));
+    else if (q === 0 || p === 0) { if (num(e.total.value) > 0 && (q === 0 && p === 0)) { /* άφησε το σύνολο */ } }
+    busy = false;
+    recalc();
+  }
+
+  /* Συνολική τιμή → τιμή μονάδος (πάντα 2 δεκαδικά) */
+  function fromTotal(r) {
+    if (busy) return;
+    var e = rowEls(r), q = num(e.qty.value), t = num(e.total.value);
+    busy = true;
+    if (q > 0 && t > 0) e.price.value = fmtPrice(K.round2(t / q));
+    busy = false;
+    recalc();
+  }
+
+  /* Στο φύγε-από-το-πεδίο: το σύνολο ευθυγραμμίζεται με ποσότητα × τιμή */
+  function normalizeRow(r) {
+    if (busy) return;
+    var e = rowEls(r), q = num(e.qty.value), p = num(e.price.value);
+    busy = true;
+    if (q > 0 && p > 0) e.total.value = K.fmt(ceil2(q * p));
+    busy = false;
+    recalc();
+  }
+
+  /* ---------- Σύνολα ---------- */
+  function currentNet() {
+    var rs = allRows(), net = 0;
+    for (var i = 0; i < rs.length; i++) net = K.round2(net + num(rowEls(rs[i]).total.value));
+    return net;
+  }
+
+  function recalc() {
+    var rs = allRows(), i;
+    for (i = 0; i < rs.length; i++) rs[i].getElementsByClassName("tv-no")[0].innerHTML = (i + 1);
+
+    var cfg = K.readConfig();
+    var net = currentNet();
+    var vat = K.round2(net * cfg.vatPct / 100);
+    var kat = K.round2(net + vat);
+
+    $("tv-net").innerHTML = K.fmt(net) + " &euro;";
+    $("tv-vatpct").innerHTML = K.fmtPct(cfg.vatPct) + "%";
+    $("tv-vat").innerHTML = K.fmt(vat) + " &euro;";
+    $("tv-kat").innerHTML = K.fmt(kat) + " &euro;";
+
+    var goal = num($("tv-goal").value), d = $("tv-diff");
+    if (goal > 0 && net > 0) {
+      var diff = K.round2(goal - kat);
+      if (Math.abs(diff) < 0.005) { d.className = "hint"; d.innerHTML = "Ταιριάζει ακριβώς με τον στόχο."; }
+      else {
+        d.className = "hint alert";
+        d.innerHTML = (diff > 0 ? "Υπολείπονται " : "Υπέρβαση κατά ") + K.fmt(Math.abs(diff)) + " &euro; από τον στόχο.";
+      }
+    } else { d.innerHTML = ""; d.className = "hint"; }
+  }
+
+  /* ---------- Πρόταση τιμών ώστε να βγει ο στόχος ---------- */
+  function gcd2(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = a % b; a = b; b = t; } return a; }
+
+  /* Ακριβής λύση: βρίσκει τιμές μονάδος (ακέραια λεπτά) ώστε Σ ποσ.×τιμή = στόχος.
+     Αν χρειαστεί, προσαρμόζει ελάχιστα μία ποσότητα (±1..3). */
+  function solveExact(rows, R) {
+    var n = rows.length, i;
+    if (n === 0 || R <= 0) return false;
+    var deltas = [0, 1, -1, 2, -2, 3, -3];
+
+    if (n === 1) {
+      var q0 = rows[0].qty;
+      if (R % q0 === 0 && R / q0 >= 1) { rows[0].p = R / q0; return true; }
+      /* πλησιέστερος διαιρέτης του στόχου, με μικρή απόκλιση ποσότητας */
+      var lim = Math.max(5, Math.round(q0 * 0.15)), best = 0, bestD = 1e9, cand, k1;
+      for (k1 = 1; k1 * k1 <= R; k1++) {
+        if (R % k1 !== 0) continue;
+        var pair = [k1, R / k1];
+        for (var z = 0; z < 2; z++) {
+          cand = pair[z];
+          if (cand < 1 || R / cand < 1) continue;
+          var dd = Math.abs(cand - q0);
+          if (dd <= lim && dd < bestD) { bestD = dd; best = cand; }
+        }
+      }
+      if (best) {
+        if (best !== q0) { rows[0].qty = best; rows[0].qAdj = true; }
+        rows[0].p = R / best;
+        return true;
+      }
+      return false;
+    }
+
+    for (var dI = 0; dI < deltas.length; dI++) {
+      for (var a = 0; a < n; a++) {
+        for (var b = 0; b < n; b++) {
+          if (a === b) continue;
+          var qb = rows[b].qty + deltas[dI];
+          if (qb < 1) continue;
+          var qa = rows[a].qty;
+
+          var Rrest = R;
+          for (i = 0; i < n; i++) if (i !== a && i !== b) Rrest -= rows[i].qty * rows[i].p;
+          if (Rrest < qa + qb) continue;
+
+          var win = Math.min(5000, Math.max(400, 2 * qb + 10));
+          var target = rows[a].p;
+          for (var k = 0; k <= win; k++) {
+            for (var s = 0; s < 2; s++) {
+              var pa = target + (s === 0 ? k : -k);
+              if (pa < 1) continue;
+              var rem = Rrest - qa * pa;
+              if (rem < qb) continue;
+              if (rem % qb === 0) {
+                var pb = rem / qb;
+                if (pb < 1) continue;
+                rows[a].p = pa;
+                rows[b].p = pb;
+                if (deltas[dI] !== 0) { rows[b].qty = qb; rows[b].qAdj = true; }
+                return true;
+              }
+            }
+            if (k === 0) continue;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  function suggest() {
+    var note = $("tv-goal-note");
+    var cfg = K.readConfig();
+    var goal = num($("tv-goal").value);
+    if (goal <= 0) { note.className = "hint alert"; note.innerHTML = "Συμπλήρωσε πρώτα τον στόχο του καταλογιστέου."; return; }
+
+    var TN = Math.round(cents(goal) / (1 + cfg.vatPct / 100));   /* στόχος καθαρής, σε λεπτά */
+    var rs = allRows(), withQty = [], i, e, q;
+    for (i = 0; i < rs.length; i++) {
+      e = rowEls(rs[i]);
+      q = num(e.qty.value);
+      if (q > 0) withQty.push({ el: e, qty: q, total: num(e.total.value), p: 0, qAdj: false });
+    }
+    if (!withQty.length) { note.className = "hint alert"; note.innerHTML = "Συμπλήρωσε ποσότητες σε τουλάχιστον μία σειρά."; return; }
+
+    /* Κλειδωμένες = όσες έχουν ήδη τιμή (όταν υπάρχουν και κενές) */
+    var locked = [], free = [], anyEmpty = false;
+    for (i = 0; i < withQty.length; i++) if (withQty[i].total <= 0) anyEmpty = true;
+    for (i = 0; i < withQty.length; i++) {
+      if (anyEmpty && withQty[i].total > 0) locked.push(withQty[i]); else free.push(withQty[i]);
+    }
+
+    var fixedC = 0;
+    for (i = 0; i < locked.length; i++) fixedC += cents(locked[i].total);
+    var R = TN - fixedC;
+    if (R <= 0) {
+      note.className = "hint alert";
+      note.innerHTML = "Οι σειρές που έχουν ήδη τιμή καλύπτουν ή ξεπερνούν τον στόχο — σβήσε κάποια τιμή ή αύξησε τον στόχο.";
+      return;
+    }
+
+    /* Αρχικές αναλογικές τιμές (λεπτά) */
+    var totW = 0;
+    for (i = 0; i < free.length; i++) totW += free[i].total;
+    for (i = 0; i < free.length; i++) {
+      var w = totW > 0 ? (free[i].total / totW) : (1 / free.length);
+      free[i].p = Math.round((R * w) / free[i].qty);
+      if (free[i].p < 1) free[i].p = 1;
+    }
+
+    /* Οι μη ακέραιες ποσότητες δεν μπαίνουν στην ακριβή επίλυση */
+    var ints = [], fracC = 0;
+    for (i = 0; i < free.length; i++) {
+      if (isInt(free[i].qty)) ints.push(free[i]);
+      else fracC += Math.ceil(free[i].qty * free[i].p - 1e-9);
+    }
+
+    var exact = solveExact(ints, R - fracC);
+
+    /* Αν δεν βρέθηκε ακριβής λύση, μείωσε όσο γίνεται τη διαφορά */
+    var S, d;
+    function totalC() {
+      var t = 0, j;
+      for (j = 0; j < free.length; j++) {
+        t += isInt(free[j].qty) ? Math.round(free[j].qty * free[j].p) : Math.ceil(free[j].qty * free[j].p - 1e-9);
+      }
+      return t;
+    }
+    if (!exact) {
+      d = R - totalC();
+      var byQ = ints.slice().sort(function (x, y) { return y.qty - x.qty; });
+      for (i = 0; i < byQ.length && d !== 0; i++) {
+        var k2 = (d > 0) ? Math.floor(d / byQ[i].qty) : -Math.floor(-d / byQ[i].qty);
+        if (byQ[i].p + k2 < 1) k2 = 1 - byQ[i].p;
+        if (k2 !== 0) { byQ[i].p += k2; d -= k2 * byQ[i].qty; }
+      }
+    }
+    S = totalC();
+    d = R - S;
+
+    /* Γράψιμο */
+    busy = true;
+    var adjCount = 0;
+    for (i = 0; i < free.length; i++) {
+      var f = free[i];
+      if (f.qAdj) { f.el.qty.value = String(f.qty); adjCount++; }
+      f.el.price.value = K.fmt(f.p / 100);
+      f.el.total.value = K.fmt((isInt(f.qty) ? Math.round(f.qty * f.p) : Math.ceil(f.qty * f.p - 1e-9)) / 100);
+    }
+    busy = false;
+
+    var msg = "Προτάθηκαν τιμές για " + free.length + " σειρ" + (free.length === 1 ? "ά" : "ές") + ".";
+    if (adjCount) msg += " Προσαρμόστηκε κατά ελάχιστο η ποσότητα σε " + adjCount + " σειρά ώστε να κλείσει ακριβώς.";
+    if (d !== 0) {
+      note.className = "hint alert";
+      msg += " Με 2 δεκαδικά δεν κλείνει ακριβώς: απομένει διαφορά " + K.fmt(Math.abs(d) / 100) +
+             " \u20ac — άλλαξε λίγο μια ποσότητα.";
+    } else {
+      note.className = "hint";
+      msg += " Το καταλογιστέο βγαίνει " + K.fmt(goal) + " \u20ac.";
+    }
+    note.innerHTML = msg;
+    recalc();
+  }
+
+  /* ---------- Χρήση στον κύριο υπολογισμό ---------- */
+  function useNet() {
+    var net = currentNet();
+    if (net <= 0) { $("tv-diff").className = "hint alert"; $("tv-diff").innerHTML = "Συμπλήρωσε πρώτα υλικά."; return; }
+    var amNet = $("am-net");
+    if (amNet && !amNet.checked) { amNet.checked = true; fire(amNet, "change"); }
+    var f = $("net");
+    f.value = K.fmt(net);
+    fire(f, "input"); fire(f, "change");
+    closeTV();
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+
+  /* ---------- Εκτύπωση Έκθεσης ---------- */
+  function buildPrint() {
+    var cfg = K.readConfig();
+    var rs = allRows(), body = "", n = 0, i;
+    for (i = 0; i < rs.length; i++) {
+      var e = rowEls(rs[i]);
+      var nm = e.name.value, t = num(e.total.value), q = num(e.qty.value);
+      if (!nm && t <= 0) continue;
+      n++;
+      body += "<tr><td class=\"mid\">" + n + "</td><td>" + esc(nm) + "</td>" +
+        "<td class=\"num\">" + (q > 0 ? esc(e.qty.value) : "") + "</td>" +
+        "<td class=\"num\">" + (num(e.price.value) > 0 ? esc(e.price.value) + "\u20ac" : "") + "</td>" +
+        "<td class=\"num\">" + (t > 0 ? K.fmt(t) + "\u20ac" : "") + "</td></tr>";
+    }
+    /* κενές σειρές για οπτική ομοιότητα με το έντυπο */
+    for (i = n; i < 12; i++) body += "<tr><td class=\"mid\">&nbsp;</td><td></td><td></td><td></td><td></td></tr>";
+
+    var net = currentNet(), vat = K.round2(net * cfg.vatPct / 100), kat = K.round2(net + vat);
+    var meta = "";
+    if ($("tv-xrisi").value) meta += "ΧΡΗΣΗ: " + esc($("tv-xrisi").value) + "<br>";
+    if ($("tv-foreas").value) meta += "ΦΟΡΕΑΣ: " + esc($("tv-foreas").value) + "<br>";
+    if ($("tv-ale").value) meta += "ΑΛΕ: " + esc($("tv-ale").value);
+
+    var title = "ΕΚΘΕΣΗ ΑΠΑΙΤΟΥΜΕΝΗΣ ΔΑΠΑΝΗΣ";
+    if ($("tv-title").value) title += "<br>ΓΙΑ ΤΗΝ ΠΡΟΜΗΘΕΙΑ " + esc($("tv-title").value).toUpperCase();
+
+    return '<div class="tvp-meta">' + meta + "</div>" +
+      '<div class="tvp-title">' + title + "</div>" +
+      "<table><thead><tr>" +
+      "<th>Α/Α</th><th>ΕΙΔΟΣ</th><th>ΠΟΣΟΤΗΤΑ</th><th>ΤΙΜΗ<br>ΜΟΝΑΔΟΣ</th><th>ΣΥΝΟΛΙΚΗ ΤΙΜΗ</th>" +
+      "</tr></thead><tbody>" + body +
+      '<tr><td class="lbl" colspan="4">ΚΑΘΑΡΗ</td><td class="num">' + K.fmt(net) + "\u20ac</td></tr>" +
+      '<tr><td class="lbl" colspan="4">ΦΠΑ ' + K.fmtPct(cfg.vatPct) + ' %</td><td class="num">' + K.fmt(vat) + "\u20ac</td></tr>" +
+      '<tr><td class="lbl" colspan="4">ΚΑΤΑΛΟΓΙΣΤΕΟ</td><td class="num"><b>' + K.fmt(kat) + "\u20ac</b></td></tr>" +
+      "</tbody></table>" +
+      ($("tv-place").value ? '<div class="tvp-place">' + esc($("tv-place").value) + "</div>" : "") +
+      '<div class="tvp-sign"><div>ΘΕΩΡΗΘΗΚΕ<br>-Ο-<br>ΔΙΟΙΚΗΤΗΣ</div><div>-Ο-<br>ΕΟΥ</div><div>-Ο-<br>ΣΥΝΤΑΞΑΣ</div></div>';
+  }
+
+  function doPrint() {
+    $("tv-print").innerHTML = buildPrint();
+    var st = document.createElement("style");
+    st.id = "tv-page-style";
+    st.innerHTML = "@page { size: A4 portrait; margin: 12mm; }";
+    document.getElementsByTagName("head")[0].appendChild(st);
+    try { window.print(); } catch (e) {}
+    setTimeout(function () {
+      var s = $("tv-page-style");
+      if (s && s.parentNode) s.parentNode.removeChild(s);
+    }, 1500);
+  }
+
+  /* ---------- Άνοιγμα / κλείσιμο ---------- */
+  function openTV() {
+    document.body.className = "tv-open";
+    $("tv-overlay").className = "show";
+    recalc();
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+  function closeTV() {
+    $("tv-overlay").className = "";
+    document.body.className = "";
+  }
+
+  /* ---------- Σύνδεση ---------- */
+  for (var i = 0; i < START_ROWS; i++) addRow(false);
+  on($("btn-tv"), "click", openTV);
+  on($("btn-tv-close"), "click", closeTV);
+  on($("btn-tv-print"), "click", doPrint);
+  on($("tv-add"), "click", function () { addRow(true); recalc(); });
+  on($("btn-tv-suggest"), "click", suggest);
+  on($("btn-tv-use"), "click", useNet);
+  on($("tv-goal"), "input", recalc);
+  recalc();
+})();
+</script>
 </body>
 </html>
